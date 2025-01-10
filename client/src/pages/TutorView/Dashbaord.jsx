@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import axios from "axios";
+const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 const Dashboard = () => {
   const [formData, setFormData] = useState({
     phoneNumber: "",
@@ -79,11 +80,11 @@ const Dashboard = () => {
 
     if (type === "file") {
       // For certifications, extract the file names to display them
-      if (name === "certifications") {
-        const filenames = Array.from(files).map((file) => file.name); // Extract filenames
+      if (type === "file" && name === "profilePicture") {
+        // If it's a file (for profilePicture), store the selected file
         setFormData({
           ...formData,
-          [name]: filenames.join(", ") // Store filenames as a comma-separated string
+          profilePicture: files[0] // Save the file object (not just the filename)
         });
       }
     } else {
@@ -96,26 +97,20 @@ const Dashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const formDataToSend = new FormData();
-
+  
+    // Only append the fields that need to be sent
     formDataToSend.append("phoneNumber", formData.phoneNumber);
     formDataToSend.append("hourlyRates", formData.hourlyRates);
     formDataToSend.append("city", formData.city);
     formDataToSend.append("postcode", formData.postcode);
-    // Append file fields (profilePicture and qualifications)
-    if (formData.profilePicture) {
-      formDataToSend.append("profilePicture", formData.profilePicture);
-    } else {
-      console.log("No profile picture selected");
-    }
+  
+    // Append certifications only if new files are selected (not profilePicture)
     if (formData.qualifications) {
-      formDataToSend.append(
-        "qualifications",
-        JSON.stringify(formData.qualifications)
-      );
+      formDataToSend.append("qualifications", JSON.stringify(formData.qualifications));
     }
-
+  
     // Append arrays (availability, subjectsTaught, gradesHandled)
     formData.availability.forEach((item, index) => {
       formDataToSend.append(`availability[${index}]`, JSON.stringify(item)); // Ensuring proper format
@@ -126,27 +121,33 @@ const Dashboard = () => {
     formData.gradesHandled.forEach((grade) => {
       formDataToSend.append("gradesHandled[]", grade); // Use '[]' for array fields
     });
-
+  
+    // If a new profile picture is selected, add it to the form data
+    if (formData.profilePicture) {
+      formDataToSend.append("profilePicture", formData.profilePicture);
+    }
+  
     console.log(...formDataToSend.entries());
-
+  
     try {
       const token = localStorage.getItem("token");
       // Assuming the tutor's ID is available from the state or context (e.g., formData.id)
       const apiUrl = `http://localhost:5000/api/tutor/profile/${formData.id}`;
-
+  
       const response = await axios.put(apiUrl, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data", // Ensures correct handling of the form data
           Authorization: `Bearer ${token}` // Adds the Authorization header
         }
       });
-
+  
       // Log the response data for debugging
       console.log(response.data);
     } catch (error) {
       console.error("Error:", error); // Log any errors for debugging
     }
   };
+  
 
   useEffect(() => {
     // Fetch tutor profile when the component loads
@@ -174,25 +175,24 @@ const Dashboard = () => {
 
     fetchTutorProfile();
   }, []);
-
-
   return (
     <div className="flex items-center justify-center mt-5">
       <div className="w-10/12 p-6 bg-gray-200 mx-auto">
         {/* Profile Picture */}
         {/* Display Profile Picture */}
         <div className="mb-3 flex items-center justify-center">
-          <div className="mt-4">
-            {/* Assuming you have the Cloudinary link stored in the state as formData.profilePicture */}
-            {formData.profilePicture && (
-              <img
-                src={formData.profilePicture}
-                alt="Profile Picture"
-                className="w-24 h-24 rounded-full object-cover"
-              />
-            )}
-          </div>
-        </div>
+  <div className="mt-4">
+    {/* Assuming you have the Cloudinary link stored in the state as formData.profilePicture */}
+    {formData.profilePicture && (
+      <img
+        src={`${BASE_URL_IMAGE}uploads/${formData.profilePicture}`}
+        alt="Profile Picture"
+        className="w-24 h-24 rounded-full object-cover"
+      />
+    )}
+  </div>
+</div>
+
 
         {/* Phone Number */}
         <form
@@ -418,9 +418,7 @@ const Dashboard = () => {
               ))}
             </ul>
           </div>
-         
-        </form>
-         <div className="w-full flex mx-auto justify-center">
+          <div className="w-full flex mx-auto justify-center">
             <button
               type="submit"
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:shadow-outline"
@@ -428,6 +426,8 @@ const Dashboard = () => {
               Update
             </button>
           </div>
+        </form>
+         
       </div>
     </div>
   );

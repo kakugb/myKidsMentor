@@ -2,12 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from 'react-redux';
+const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 const TutorDetail = () => {
   const { user } = useSelector((state) => state.auth);  // Access user from Redux
-  const senderId = user?.id;  
+  const senderPhoneNumber = user?.phoneNumber;  
+  const senderId = user?.id;
  
   const { tutorId } = useParams();
   const [tutor, setTutor] = useState(null);
+  const [tutorPhoneNumber, setTutorPhoneNumber] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,6 +27,7 @@ const TutorDetail = () => {
 
   // Helper function to check availability for a specific day and time
   const isAvailable = (day, timeRange) => {
+    // Mapping days to full names
     const dayMapping = {
       Mon: "Monday",
       Tue: "Tuesday",
@@ -33,15 +37,15 @@ const TutorDetail = () => {
       Sat: "Saturday",
       Sun: "Sunday",
     };
-
-    return tutor.availability.some(
-      (item) =>
-        item.day === dayMapping[day] &&
-        (timeRange === "Pre 12pm"
-          ? item.time.toLowerCase().includes("12pm") === false
-          : item.time.toLowerCase().includes("12pm") ||
-            item.time.toLowerCase().includes("3pm"))
-    );
+  
+    // Check if tutor is available on the given day and within the time range
+    return tutor.availability.some((item) => {
+      // Match the day
+      if (item.day !== dayMapping[day]) return false;
+  
+      // Check if the time range matches exactly
+      return item.time === timeRange;
+    });
   };
 
   // Fetch Tutor details
@@ -50,7 +54,9 @@ const TutorDetail = () => {
     const fetchTutorDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/tutor/${tutorId}`);
+        
         setTutor(response.data);
+        setTutorPhoneNumber(response.data.phoneNumber);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       } finally {
@@ -80,14 +86,15 @@ const TutorDetail = () => {
     reviews.reduce((total, review) => total + review.rating, 0) / reviews.length || 0
   ).toFixed(1);
   
-  const fetchMessages = async () => {
 
+  const fetchMessages = async () => {
+    
     try {
-       
+        
       const response = await axios.get(
-        `http://localhost:5000/api/messages/userMessage?userId=${senderId}&otherUserId=${tutorId}`
+        `http://localhost:5000/api/messages/userMessage?senderPhoneNumber=${senderPhoneNumber}&tutorPhoneNumber=${tutorPhoneNumber}`
       );
-     
+     console.log("message",response.data)
       setMessages(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -98,7 +105,7 @@ const TutorDetail = () => {
 
   useEffect(() => {  
     fetchMessages()
-  }, [senderId, tutorId]);
+  }, [senderPhoneNumber, tutorPhoneNumber]);
 
 
   const handleAddReview = async () => {
@@ -129,8 +136,8 @@ const TutorDetail = () => {
     if (!messageText.trim()) return; // Don't send if the message is empty
   
     const newMessage = {
-      senderId,
-      receiverId: tutorId,
+      senderPhoneNumber,
+      receiverPhoneNumber: tutorPhoneNumber,
       content: messageText,  // Make sure this matches the backend field name
       timestamp: new Date(),
     };
@@ -149,8 +156,7 @@ const TutorDetail = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error}</p>;
-console.log(tutor)
+
   return (
     <div className="container mx-auto p-5 lg:flex gap-10">
       {/* LEFT COLUMN: Tutor Details */}
@@ -158,7 +164,8 @@ console.log(tutor)
         {/* Profile Section */}
         <div className="flex gap-5 items-center">
           <img
-            src={tutor.profilePicture || "https://via.placeholder.com/150"}
+          
+          src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
             alt="Tutor"
             className="w-24 h-24 object-cover rounded-full border"
           />
@@ -220,7 +227,7 @@ console.log(tutor)
 
           <div className="mt-5">
             <h3 className="text-lg font-semibold">Add a Review</h3>
-            {error && <p className="text-red-500">{error}</p>}
+            {/* {error && <p className="text-red-500">{error}</p>} */}
             <div className="flex items-center mt-2">
               <span className="text-yellow-400">
                 {"★".repeat(rating) + "☆".repeat(5 - rating)}
@@ -264,41 +271,59 @@ console.log(tutor)
           <h2 className="text-xl font-semibold">Qualifications</h2>
           {tutor.qualifications}
         </div>
-
-        {/* Availability */}
+{/* Certifications Section */}
+{tutor.certifications && tutor.certifications.length > 0 && (
+          <div className="mt-5">
+            <h2 className="text-xl font-semibold">Certifications</h2>
+            <ul className="mt-3">
+              {tutor.certifications.map((certificate, index) => (
+                <li key={index} className="mb-2">
+                  {/* Display image preview if it's an image file */}
+                  <a 
+                    href={`${BASE_URL_IMAGE}uploads/${certificate}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {/* Show image as thumbnail for certificates */}
+                    <img 
+                      src={`${BASE_URL_IMAGE}uploads/${certificate}`} 
+                      alt={`Certification ${index + 1}`} 
+                      className="w-16 h-16 object-cover border rounded"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">General Availability</h2>
-          <table className="w-full mt-2 border-collapse border">
-            <thead>
-              <tr>
-                <th className="border p-2">Time</th>
-                {daysOfWeek.map((day) => (
-                  <th key={day} className="border p-2">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-2">9am - 12pm</td>
-                {daysOfWeek.map((day) => (
-                  <td key={day} className="border p-2">
-                    {isAvailable(day, "Pre 12pm") ? "✓" : "x"}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border p-2">12pm - 5pm</td>
-                {daysOfWeek.map((day) => (
-                  <td key={day} className="border p-2">
-                    {isAvailable(day, "12pm - 5pm") ? "✓" : "x"}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <h2 className="text-xl font-semibold">General Availability</h2>
+  <table className="w-full mt-2 border-collapse border">
+    <thead>
+      <tr>
+        <th className="border p-2">Time</th>
+        {daysOfWeek.map((day) => (
+          <th key={day} className="border p-2">
+            {day}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {tutor?.availability?.map((item) => (
+        <tr key={item.time}>
+          <td className="border p-2">{item.time}</td>
+          {daysOfWeek.map((day) => (
+            <td key={day} className="border p-2">
+              {isAvailable(day, item.time) ? "✓" : "x"}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
       </div>
 
       {/* RIGHT COLUMN: Messages Section */}
@@ -313,11 +338,11 @@ console.log(tutor)
     messages.messages.map((message, index) => (
       <div
         key={index}
-        className={`mb-2 ${message.senderId === senderId ? "text-right" : ""}`}
+         className={`mb-2 ${message.senderPhoneNumber === senderPhoneNumber ? "text-right" : ""}`}
       >
         <p
           className={
-            message.senderId === senderId ? "text-green-600" : "text-blue-600"
+            message.senderPhoneNumber === senderPhoneNumber ? "text-green-600" : "text-blue-600"
           }
         >
           {message.content}

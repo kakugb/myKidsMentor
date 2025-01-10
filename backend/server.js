@@ -8,7 +8,7 @@ const adminRoutes = require('./routes/admin');
 const reviewRoutes = require('./routes/rewiews.js');
 const filterRoutes = require('./routes/filterTutor.js');
 const messageRoutes = require("./routes/messageRoutes.js"); // NEW
-const fileUpload = require('express-fileupload');
+const path = require('path');
 const cors = require("cors");
 
 const app = express();
@@ -19,8 +19,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());

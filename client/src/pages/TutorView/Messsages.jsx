@@ -11,196 +11,192 @@ function Messages() {
   const { user } = useSelector((state) => state.auth); // Access user from Redux
   const senderId = user?.id;
   
-  
-  
+  const senderPhoneNumber = user?.phoneNumber;
+  const [receiverDetails, setReceiverDetails] = useState(null); // State to store the receiver's static details
+const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
   useEffect(() => {
-     // Fetch users from the server
-     const fetchUsers = async () => {
-    
+    // Fetch users from the server
+    const fetchUsers = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/messages/history?userId=${senderId}`);
-        console.log("sss",response.data)
+
         setUsers(response.data?.conversations);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
-    }; 
+    };
     fetchUsers();
   }, []);
 
- 
-
   useEffect(() => {
     if (selectedUser) {
+    
+      const tutorPhoneNumber = selectedUser.phoneNumber;
       
-      fetchMessages(selectedUser.userB);
+      // Fetch the messages for the selected conversation
+      fetchMessages(tutorPhoneNumber);
+      setTutorPhoneNumber(selectedUser.phoneNumber);
+      // Fetch receiver details (static details)
+      fetchReceiverDetails(selectedUser.userB);
     }
   }, [selectedUser]);
 
-  const fetchMessages = async (parentId) => {
-
+  const fetchReceiverDetails = async (receiverId) => {
     try {
+      
+      // Assuming receiver's details are available by receiverId
+      const response = await axios.get(`http://localhost:5000/api/users/${receiverId}`);
+      
+      setReceiverDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching receiver details:', error);
+    }
+  };
+
+  const fetchMessages = async (tutorPhoneNumber) => {
+    try {
+      console.log(tutorPhoneNumber,senderPhoneNumber)
       const response = await axios.get(
-        `http://localhost:5000/api/messages/userMessage?userId=${parentId}&otherUserId=${senderId}`
+`http://localhost:5000/api/messages/userMessage?senderPhoneNumber=${senderPhoneNumber}&tutorPhoneNumber=${tutorPhoneNumber}`
       );
-      console.log("Messages fetched:", response);
-      setMessages(response?.data?.messages); // Set the messages for the right column
+     
+      setMessages(response.data.messages);
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
   };
 
+  const sendMessage = async () => {
+    console.log(senderPhoneNumber,ReceiverNumber)
+    if (!messageText.trim()) return;
+    if (senderPhoneNumber === ReceiverNumber) {
+      alert("You cannot send a message to yourself.");
+      return;
+    }
 
    
-    const formatTimestamp = (timestamp) => {
-        const date = new Date(timestamp);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-      };
-      console.log(users)
-      console.log(senderId,selectedUser?.userB)
-      const sendMessage = async () => {
-        if (!messageText.trim()) return;
-      
-        // Check if senderId and receiverId are the same
-        if (senderId === selectedUser?.userB) {
-          alert("You cannot send a message to yourself.");
-          return; // Stop further execution
-        }
-      
-        // Create the new message
-        const newMessage = {
-          senderId,
-          receiverId: selectedUser?.userB,
-          content: messageText,
-          timestamp: new Date(),
-        };
-      
-        // Optimistic update: Append the new message directly to the state
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          newMessage, // Add the new message to the end of the list
-        ]);
-      
-        // Clear the input field after sending the message
-        setMessageText("");
-      
-        try {
-          // Send the message to the server
-          const response = await axios.post("http://localhost:5000/api/messages/send", newMessage);
-      
-          // Refetch the messages after sending
-          fetchMessages(selectedUser.userB); // Fetch the latest messages from the server
-        } catch (err) {
-          setError(err.response?.data?.message || err.message);
-        }
-      };
-      
-      
-      
 
-      const selectedUserMessages = selectedUser
-      ? messages
-      : [];
+    const newMessage = {
+      senderPhoneNumber,
+      receiverPhoneNumber: ReceiverNumber,
+      content: messageText, 
+      timestamp: new Date(),
+    };
 
-   console.log(users)
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      newMessage,
+    ]);
+    setMessageText("");
+
+    try {
+      await axios.post("http://localhost:5000/api/messages/send", newMessage);
+      fetchMessages(selectedUser.userB);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+console.log(users)
   return (
     <div className="flex h-screen overflow-hidden" style={{ maxHeight: 'calc(100vh - 120px)' }}>
-    {/* Left: User List */}
-    <div className="w-1/3 bg-gray-100 p-4 overflow-y-auto">
-      <h2 className="font-semibold text-xl mb-4">Messages</h2>
-      <div className="space-y-4">
-        {users?.map((user) => (
-          <div
-            key={user.receiverId}
-            onClick={() => setSelectedUser(user)}
-            className="flex items-center justify-between p-4 hover:bg-gray-100 cursor-pointer rounded-md"
-          >
-            <div className="flex items-center space-x-4">
-              {/* Profile picture */}
-              <img
-                src={user.userBProfilePicture}
-                alt={user.userBName}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <div>
-                {/* User name */}
-                <p className="font-semibold text-lg">{user.userBName}</p>
-                {/* Last message */}
-                <p className="text-sm text-gray-500">{user.lastMessage}</p>
-              </div>
-            </div>
-            <div className="text-xs text-gray-500">
-              {formatTimestamp(user.timestamp)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  
-    {/* Right: Chat Area */}
-    <div className="w-2/3 bg-white flex flex-col">
-      {selectedUser ? (
-        <>
-          {/* Header */}
-          <div className="p-4 border-b">
-            <h2 className="text-xl font-semibold">{selectedUser.name}</h2>
-          </div>
-  
-          {/* Messages Container */}
-          <div
-            className="flex-1 p-4 space-y-4 overflow-y-auto"
-            style={{
-                maxHeight: 'calc(60vh - 70px)', // Adjust as needed
-                scrollbarWidth: 'none', // Firefox
-                msOverflowStyle: 'none', // Internet Explorer/Edge
-              }} // Adjust 120px to the header/input height
-          >
-            {selectedUserMessages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  message.senderId === senderId ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <div
-                  className={`p-3 rounded-lg ${
-                    message.senderId === senderId
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-900'
-                  } max-w-xs`}
-                >
-                  <p className="text-sm">{message.content}</p>
-                  <p className="text-xs text-gray-500 text-right">{message.time}</p>
+      {/* Left: User List */}
+      <div className="w-1/3 bg-gray-100 p-4 overflow-y-auto">
+        <h2 className="font-semibold text-xl mb-4">Messages</h2>
+        <div className="space-y-4">
+          {users.map((user) => (
+            <div
+              key={user.receiverId}
+              onClick={() => setSelectedUser(user)}
+              className="flex items-center justify-between p-4 hover:bg-gray-100 cursor-pointer rounded-md"
+            >
+              <div className="flex items-center space-x-4">
+                <img
+                  src={user.profilePicture}
+                  alt={user.profilePicture}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div>
+                  <p className="font-semibold text-lg">{user.name}</p>
+                  <p className="text-sm text-gray-500">{user.lastMessage}</p>
                 </div>
               </div>
-            ))}
-          </div>
-  
-          {/* Message Input */}
-          <div className="p-4 border-t">
-          <textarea
-  className="w-full p-3 border rounded-md"
-  rows="3"
-  placeholder="Type a message"
-  value={messageText}
-  onChange={(e) => setMessageText(e.target.value)} // Update messageText state
-></textarea>
+              <div className="text-xs text-gray-500">
+                {formatTimestamp(user.timestamp)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-            <button
-               onClick={sendMessage}
-            className="w-full bg-green-600 text-white py-2 rounded-md mt-2">
-              Send Message
-            </button>
-          </div>
-        </>
-      ) : (
-        <p className="text-center text-gray-500 p-4">
-          Select a user to start chatting.
-        </p>
-      )}
+      {/* Right: Chat Area */}
+      <div className="w-2/3 bg-white flex flex-col">
+        {selectedUser ? (
+          <>
+            {/* Header */}
+            <div className="p-4 border-b">
+              <h2 className="text-xl font-semibold">{receiverDetails?.name}</h2>
+            </div>
+
+            {/* Messages Container */}
+            <div
+              className="flex-1 p-4 space-y-4 overflow-y-auto"
+              style={{
+                maxHeight: 'calc(60vh - 70px)',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
+            >
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    message.senderPhoneNumber === senderPhoneNumber ? 'justify-end' : 'justify-start'
+                  }`}
+                >
+                  <div
+                    className={`p-3 rounded-lg ${
+                      message.senderPhoneNumber === senderPhoneNumber
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 text-gray-900'
+                    } max-w-xs`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                    <p className="text-xs text-gray-500 text-right">
+                      {formatTimestamp(message.timestamp)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Message Input */}
+            <div className="p-4 border-t">
+              <textarea
+                className="w-full p-3 border rounded-md"
+                rows="3"
+                placeholder="Type a message"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              ></textarea>
+
+              <button
+                onClick={sendMessage}
+                className="w-full bg-green-600 text-white py-2 rounded-md mt-2"
+              >
+                Send Message
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="text-center text-gray-500 p-4">Select a user to start chatting.</p>
+        )}
+      </div>
     </div>
-  </div>
-  
   );
 }
 

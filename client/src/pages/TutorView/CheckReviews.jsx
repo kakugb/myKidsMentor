@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from 'react-redux';
+const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 const CheckReviews = () => {
   const { user } = useSelector((state) => state.auth);  // Access user from Redux
   const tutorId = user?.id;  
@@ -20,6 +21,7 @@ const CheckReviews = () => {
 
   // Helper function to check availability for a specific day and time
   const isAvailable = (day, timeRange) => {
+    // Mapping days to full names
     const dayMapping = {
       Mon: "Monday",
       Tue: "Tuesday",
@@ -29,17 +31,19 @@ const CheckReviews = () => {
       Sat: "Saturday",
       Sun: "Sunday",
     };
-
-    return tutor.availability.some(
-      (item) =>
-        item.day === dayMapping[day] &&
-        (timeRange === "Pre 12pm"
-          ? item.time.toLowerCase().includes("12pm") === false
-          : item.time.toLowerCase().includes("12pm") ||
-            item.time.toLowerCase().includes("3pm"))
-    );
+  
+    // Check if tutor is available on the given day and within the time range
+    return tutor.availability.some((item) => {
+      // Match the day
+      if (item.day !== dayMapping[day]) return false;
+  
+      // Check if the time range matches exactly
+      return item.time === timeRange;
+    });
   };
-
+  
+  
+ 
   // Fetch Tutor details
   useEffect(() => {
     
@@ -47,6 +51,7 @@ const CheckReviews = () => {
         
       try {
         const response = await axios.get(`http://localhost:5000/api/tutor/${tutorId}`);
+        
         setTutor(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
@@ -92,7 +97,7 @@ console.log(tutor)
         {/* Profile Section */}
         <div className="flex gap-5 items-center">
           <img
-            src={tutor.profilePicture || "https://via.placeholder.com/150"}
+            src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
             alt="Tutor"
             className="w-24 h-24 object-cover rounded-full border"
           />
@@ -152,46 +157,42 @@ console.log(tutor)
           </div>
         </div>
 
-        {/* Qualifications */}
+        {/* Qualifications */} 
         <div className="mt-5">
           <h2 className="text-xl font-semibold">Qualifications</h2>
           {tutor.qualifications}
         </div>
 
-        {/* Availability */}
+       
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">General Availability</h2>
-          <table className="w-full mt-2 border-collapse border">
-            <thead>
-              <tr>
-                <th className="border p-2">Time</th>
-                {daysOfWeek.map((day) => (
-                  <th key={day} className="border p-2">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-2">9am - 12pm</td>
-                {daysOfWeek.map((day) => (
-                  <td key={day} className="border p-2">
-                    {isAvailable(day, "Pre 12pm") ? "✓" : "x"}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="border p-2">12pm - 5pm</td>
-                {daysOfWeek.map((day) => (
-                  <td key={day} className="border p-2">
-                    {isAvailable(day, "12pm - 5pm") ? "✓" : "x"}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <h2 className="text-xl font-semibold">General Availability</h2>
+  <table className="w-full mt-2 border-collapse border">
+    <thead>
+      <tr>
+        <th className="border p-2">Time</th>
+        {daysOfWeek.map((day) => (
+          <th key={day} className="border p-2">
+            {day}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {tutor?.availability?.map((item) => (
+        <tr key={item.time}>
+          <td className="border p-2">{item.time}</td>
+          {daysOfWeek.map((day) => (
+            <td key={day} className="border p-2">
+              {isAvailable(day, item.time) ? "✓" : "x"}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
       </div>
 
       

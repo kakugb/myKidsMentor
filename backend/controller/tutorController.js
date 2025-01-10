@@ -94,6 +94,7 @@ exports.getTutorProfileById = async (req, res) => {
     // Construct and return the tutor profile
     const tutorProfile = {
       id: tutor.id,
+      name: tutor.name,
       phoneNumber: tutor.phoneNumber,
       profilePicture: tutor.profilePicture,
       qualifications: tutor.qualifications,
@@ -121,66 +122,88 @@ exports.getTutorProfileById = async (req, res) => {
 
 exports.updateTutorProfile = async (req, res) => {
   try {
-    // Find the tutor by their ID 
-    console.log(req.params.id)
-    const tutor = await User.findByPk(req.params.id); // Use req.params.id here
-   
-    if (!tutor) return res.status(404).json({ message: 'Tutor not found' });
+    // Find the tutor by their ID
+    const tutor = await User.findByPk(req.params.id);
 
-    // Handle profile picture update
-    if (req.file) {
-      // Delete old profile picture from Cloudinary if it exists
-      if (tutor.profilePicture) {
-        const publicId = tutor.profilePicture.split('/').pop().split('.')[0]; // Extract public ID
-        await cloudinary.uploader.destroy(`profile_pictures/${publicId}`);
-      }
-
-      // Upload new profile picture to Cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'profile_pictures',
-      });
-
-      // Set new profile picture URL
-      tutor.profilePicture = result.secure_url;
-
-      // Remove file from server after upload
-      fs.unlinkSync(req.file.path);
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor not found" });
     }
 
+    if (req.files?.profilePicture) {
+      // Delete old profile picture if it exists
+      if (tutor.profilePicture) {
+        const oldProfilePicturePath = `uploads/${tutor.profilePicture}`;
+        if (fs.existsSync(oldProfilePicturePath)) {
+          fs.unlinkSync(oldProfilePicturePath);
+        }
+      }
+    
+      // Save the new profile picture filename
+      const profilePicture = req.files.profilePicture[0];
+      tutor.setDataValue('profilePicture', profilePicture.filename);
+    
+      console.log("Updated Profile Picture Field:", tutor.profilePicture);
+    }
+    
+   
+
+
+    // Handle availability data update (only if provided)
+    if (req.body.availability) {
+      const availabilityData = req.body.availability.map((item) => {
+        try {
+          return JSON.parse(item); // Parse stringified JSON
+        } catch (error) {
+          console.error("Error parsing availability item:", error);
+          return null; // Ignore invalid items
+        }
+      }).filter((item) => item !== null);
+      tutor.availability = availabilityData;
+    }
+  
+    // Update other fields
     const updatableFields = [
-      'name',
-      'email',
-      'phoneNumber',
-      'qualifications',
-      'subjectsTaught',
-      'gradesHandled',
-      'teachingExperience',
-      'hourlyRates',
-      'availability',
-      'certifications',
-      'city',
-      'postcode',
+      "name",
+      "email",
+      "phoneNumber",
+      "qualifications",
+      "subjectsTaught",
+      "gradesHandled",
+      "teachingExperience",
+      "hourlyRates",
+      "city",
+      "postcode",
     ];
 
     updatableFields.forEach((field) => {
       if (req.body[field] !== undefined) {
-        tutor[field] =
-          ['subjectsTaught', 'gradesHandled', 'availability'].includes(field)
-            ? Array.isArray(req.body[field])
-              ? req.body[field]
-              : req.body[field].includes(',')
-              ? req.body[field].split(',').map((item) => item.trim())
-              : JSON.parse(req.body[field])
-            : req.body[field];
+        let value = req.body[field];
+
+        // Remove extra quotes for specific fields
+        if (field === "qualifications" && typeof value === "string") {
+          value = value.replace(/^"(.*)"$/, "$1"); // Remove surrounding quotes
+        }
+
+        // Split comma-separated values for specific fields
+        if (["subjectsTaught", "gradesHandled"].includes(field) && typeof value === "string") {
+          value = value.split(",").map((item) => item.trim());
+        }
+
+        tutor[field] = value;
       }
     });
 
-    await tutor.save();
+    console.log("Before Save Profile Picture:", tutor.profilePicture);
+await tutor.save();
+console.log("Changed Fields After Setting Profile Picture:", tutor.changed());
 
-    res.status(200).json({ message: 'Profile updated successfully', tutor });
+
+    res.status(200).json({ message: "Profile updated successfully", tutor });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("Error updating tutor profile:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
 

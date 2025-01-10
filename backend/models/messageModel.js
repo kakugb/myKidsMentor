@@ -23,8 +23,14 @@ const MessageModel = sequelize.define("Message", {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  senderPhoneNumber: {
+    type: DataTypes.STRING(15), 
+    allowNull: false, 
+  },
+  receiverPhoneNumber: {
+    type: DataTypes.STRING(15), 
+    allowNull: false, 
+  }
 });
-
-
 
 module.exports = MessageModel;

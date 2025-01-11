@@ -114,12 +114,6 @@ exports.getTutorProfileById = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 exports.updateTutorProfile = async (req, res) => {
   try {
     // Find the tutor by their ID
@@ -206,4 +200,76 @@ console.log("Changed Fields After Setting Profile Picture:", tutor.changed());
 };
 
 
+// Controller to add certificates
+
+exports.addCertificate = async (req, res) => {
+  try {
+    const tutor = await User.findByPk(req.params.tutorId);
+
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor not found" });
+    }
+
+    // Log received files
+    console.log("Files received:", req.files);
+    const uploadedFiles = req.files?.certifications || [];
+
+    if (uploadedFiles.length === 0) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Parse existing certifications or initialize as an empty array
+    let existingCertifications = tutor.certifications || [];
+    if (typeof existingCertifications === "string") {
+      existingCertifications = JSON.parse(existingCertifications);
+    }
+
+    // Add new file names to certifications array
+    uploadedFiles.forEach(file => {
+      existingCertifications.push(file.filename);
+    });
+
+    // Save the updated certifications back to the database
+    tutor.certifications = JSON.stringify(existingCertifications);
+    await tutor.save();
+
+    res.status(200).json({
+      message: "Certificate uploaded successfully",
+      certifications: existingCertifications,
+    });
+  } catch (error) {
+    console.error("Error uploading certificate:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+
+ 
+
+exports.getTutorCertificates = async (req, res) => {
+  try {
+    // Find the tutor by their ID
+    const tutor = await User.findByPk(req.params.id);
+
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor not found" });
+    }
+
+    // Parse the certifications field if stored as a JSON string
+    let certifications = tutor.certifications || [];
+    if (typeof certifications === "string") {
+      certifications = JSON.parse(certifications);
+    }
+
+    res.status(200).json({
+      message: "Certificates retrieved successfully",
+      certifications,
+    });
+  } catch (error) {
+    console.error("Error fetching certifications:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 

@@ -4,7 +4,9 @@ const {
   getTutorProfile,
   updateTutorProfile,
   getAllTutorProfiles,
-  getTutorProfileById
+  getTutorProfileById,
+  addCertificate,
+  getTutorCertificates
 } = require("../controller/tutorController.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
 const roleMiddleware = require("../middleware/roleMiddleware.js");
@@ -29,4 +31,16 @@ router.put(
   updateTutorProfile
 );
 
+//Add addCertifications
+
+
+router.put(
+  '/addcertificate/:tutorId',
+  upload.fields([{ name: 'certifications', maxCount: 10 }]),
+  addCertificate
+);
+
+
 module.exports = router;
+
+

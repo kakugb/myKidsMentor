@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { verifyUser, getAllUsers,createUser,deleteUser,getAllReviews, getReviewById, updateReview, deleteReview, createReview } = require('../controller/adminController.js');
+const { loginAdmin,verifyUser, getAllUsers,createUser,deleteUser,getAllReviews, getReviewById, updateReview, deleteReview, createReview } = require('../controller/adminController.js');
 
 const authMiddleware = require('../middleware/authMiddleware.js');
 const roleMiddleware = require('../middleware/roleMiddleware.js');
 
+router.post("/login", loginAdmin);
 
 router.get('/users', authMiddleware, roleMiddleware('admin'), getAllUsers);
 

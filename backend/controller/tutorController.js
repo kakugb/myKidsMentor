@@ -201,7 +201,6 @@ console.log("Changed Fields After Setting Profile Picture:", tutor.changed());
 
 
 // Controller to add certificates
-
 exports.addCertificate = async (req, res) => {
   try {
     const tutor = await User.findByPk(req.params.tutorId);
@@ -243,15 +242,11 @@ exports.addCertificate = async (req, res) => {
   }
 };
 
-
-
-
- 
-
 exports.getTutorCertificates = async (req, res) => {
   try {
+    console.log(req.params.tutorId)
     // Find the tutor by their ID
-    const tutor = await User.findByPk(req.params.id);
+    const tutor = await User.findByPk(req.params.tutorId);
 
     if (!tutor) {
       return res.status(404).json({ message: "Tutor not found" });
@@ -272,4 +267,45 @@ exports.getTutorCertificates = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+exports.deleteCertificate = async (req, res) => {
+  try {
+    const { tutorId } = req.params;
+    const { certificate } = req.body; // Certificate to delete is sent in the body
+console.log(certificate,tutorId)
+    // Find the tutor by ID
+    const tutor = await User.findByPk(tutorId);
+
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor not found" });
+    }
+
+    // Parse existing certifications
+    let certifications = tutor.certifications || [];
+    if (typeof certifications === "string") {
+      certifications = JSON.parse(certifications);
+    }
+
+    // Check if the certificate exists in the array
+    if (!certifications.includes(certificate)) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    // Remove the specified certificate
+    certifications = certifications.filter((cert) => cert !== certificate);
+
+    // Save the updated certifications back to the database
+    tutor.certifications = JSON.stringify(certifications);
+    await tutor.save();
+
+    res.status(200).json({
+      message: "Certificate deleted successfully",
+      certifications, // Return the updated certifications array
+    });
+  } catch (error) {
+    console.error("Error deleting certificate:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 

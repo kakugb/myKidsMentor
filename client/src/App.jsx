@@ -45,6 +45,7 @@ import AddDocuments from "./pages/TutorView/AddDocuments.jsx";
 import TutorDetail from "./pages/parentView/TutorDetail.jsx";
 import Messsages from "./pages/TutorView/Messsages.jsx";
 import CheckReviews from "./pages/TutorView/CheckReviews.jsx";
+import LoginAdmin from "./pages/auth/LoginAdmin.jsx";
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -61,9 +62,10 @@ function App() {
       <Route path="/logins" element={<LoginFormCards/>}/>
       <Route path="/tutor/Register" element={<TutorRegistration/>}/>
       <Route path="/Signups" element={<SignupFormCards/>}/>
+      <Route path="/loginAdmin" element={<LoginAdmin/>}/>
       {/* <Route path="/parent/login" element={<LoginParent/>}/> */}
 
-        <Route
+        <Route 
           path="/admin"
           element={
             <CheckAuth

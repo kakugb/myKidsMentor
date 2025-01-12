@@ -157,7 +157,7 @@ function Footer() {
           <ul className="space-y-2 font-medium">
             <li className="mb-1">
               <Link
-                to=''
+                to='/admin/dashboard'
                 className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
               >
                 <svg
@@ -190,7 +190,7 @@ function Footer() {
             </li>
             <li className="mb-1">
               <Link
-                to=''
+                to='/admin/addUser'
                 className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
               >
                 <svg

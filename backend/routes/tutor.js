@@ -6,7 +6,8 @@ const {
   getAllTutorProfiles,
   getTutorProfileById,
   addCertificate,
-  getTutorCertificates
+  getTutorCertificates,
+  deleteCertificate
 } = require("../controller/tutorController.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
 const roleMiddleware = require("../middleware/roleMiddleware.js");
@@ -39,6 +40,10 @@ router.put(
   upload.fields([{ name: 'certifications', maxCount: 10 }]),
   addCertificate
 );
+
+router.get('/getCertificates/:tutorId', getTutorCertificates); 
+
+router.delete('/deleteCertificate/:tutorId', deleteCertificate);
 
 
 module.exports = router;

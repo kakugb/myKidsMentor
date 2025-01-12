@@ -1,6 +1,52 @@
 const Review = require('../models/reviews.js');
 const User = require('../models/user.js')
 const { Op } = require('sequelize');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Admin = require("../models/admin.js");
+
+
+exports.loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if admin exists
+    const admin = await Admin.findOne({ where: { email } });
+
+    if (!admin) {
+      return res.status(400).json({ error: "Admin not found." });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid credentials." });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: admin.id, role: admin.role }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // Send response with token and admin data
+    res.status(200).json({
+      token, 
+      user: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role  || 'admin', 
+        profile_picture: admin.profile_picture,
+      }
+    });
+  } catch (error) {
+    console.error("Error logging in admin:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+
 
 
 exports.getAllUsers = async (req, res) => {

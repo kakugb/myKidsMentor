@@ -31,13 +31,13 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
   useEffect(() => {
     if (selectedUser) {
     
-      const tutorPhoneNumber = selectedUser.phoneNumber;
+    
       
       // Fetch the messages for the selected conversation
-      fetchMessages(tutorPhoneNumber);
-      setTutorPhoneNumber(selectedUser.phoneNumber);
-      // Fetch receiver details (static details)
-      fetchReceiverDetails(selectedUser.userB);
+      fetchMessages(selectedUser?.id);
+      setTutorPhoneNumber(selectedUser?.id);
+      // // Fetch receiver details (static details)
+      // fetchReceiverDetails(selectedUser.userB);
     }
   }, [selectedUser]);
 
@@ -45,7 +45,7 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
     try {
       
       // Assuming receiver's details are available by receiverId
-      const response = await axios.get(`http://localhost:5000/api/users/${receiverId}`);
+      const response = await axios.get(`http://localhost:5000/api/users/${ReceiverNumber}`);
       
       setReceiverDetails(response.data);
     } catch (error) {
@@ -53,11 +53,11 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
     }
   };
 
-  const fetchMessages = async (tutorPhoneNumber) => {
+  const fetchMessages = async (id) => {
     try {
-      console.log(tutorPhoneNumber,senderPhoneNumber)
+      
       const response = await axios.get(
-`http://localhost:5000/api/messages/userMessage?senderPhoneNumber=${senderPhoneNumber}&tutorPhoneNumber=${tutorPhoneNumber}`
+`http://localhost:5000/api/messages/userMessage?senderId=${user?.id}&receiverId=${id}`
       );
      
       setMessages(response.data.messages);
@@ -67,9 +67,9 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
   };
 
   const sendMessage = async () => {
-    console.log(senderPhoneNumber,ReceiverNumber)
+    
     if (!messageText.trim()) return;
-    if (senderPhoneNumber === ReceiverNumber) {
+    if (user?.id === ReceiverNumber) {
       alert("You cannot send a message to yourself.");
       return;
     }
@@ -77,8 +77,8 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
    
 
     const newMessage = {
-      senderPhoneNumber,
-      receiverPhoneNumber: ReceiverNumber,
+      senderId,
+      receiverId: ReceiverNumber,
       content: messageText, 
       timestamp: new Date(),
     };
@@ -101,7 +101,7 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
   };
-console.log(users)
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ maxHeight: 'calc(100vh - 120px)' }}>
       {/* Left: User List */}

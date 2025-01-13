@@ -6,9 +6,9 @@ const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 const TutorDetail = () => {
   const { user } = useSelector((state) => state.auth);  // Access user from Redux
   const senderPhoneNumber = user?.phoneNumber;  
-  const senderId = user?.id;
  
   const { tutorId } = useParams();
+ 
   const [tutor, setTutor] = useState(null);
   const [tutorPhoneNumber, setTutorPhoneNumber] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -92,7 +92,7 @@ const TutorDetail = () => {
     try {
         
       const response = await axios.get(
-        `http://localhost:5000/api/messages/userMessage?senderPhoneNumber=${senderPhoneNumber}&tutorPhoneNumber=${tutorPhoneNumber}`
+        `http://localhost:5000/api/messages/userMessage?senderId=${user?.id}&receiverId=${tutorId}`
       );
      console.log("message",response.data)
       setMessages(response.data);
@@ -136,8 +136,8 @@ const TutorDetail = () => {
     if (!messageText.trim()) return; // Don't send if the message is empty
   
     const newMessage = {
-      senderPhoneNumber,
-      receiverPhoneNumber: tutorPhoneNumber,
+      senderId:user?.id,
+      receiverId: tutorId,
       content: messageText,  // Make sure this matches the backend field name
       timestamp: new Date(),
     };
@@ -156,7 +156,7 @@ const TutorDetail = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-
+console.log(tutor.certifications)
   return (
     <div className="container mx-auto p-5 lg:flex gap-10">
       {/* LEFT COLUMN: Tutor Details */}
@@ -271,32 +271,30 @@ const TutorDetail = () => {
           <h2 className="text-xl font-semibold">Qualifications</h2>
           {tutor.qualifications}
         </div>
-{/* Certifications Section */}
-{tutor.certifications && tutor.certifications.length > 0 && (
-          <div className="mt-5">
-            <h2 className="text-xl font-semibold">Certifications</h2>
-            <ul className="mt-3">
-              {tutor.certifications.map((certificate, index) => (
-                <li key={index} className="mb-2">
-                  {/* Display image preview if it's an image file */}
-                  <a 
-                    href={`${BASE_URL_IMAGE}uploads/${certificate}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    {/* Show image as thumbnail for certificates */}
-                    <img 
-                      src={`${BASE_URL_IMAGE}uploads/${certificate}`} 
-                      alt={`Certification ${index + 1}`} 
-                      className="w-16 h-16 object-cover border rounded"
-                    />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {Array.isArray(tutor.certifications) && tutor.certifications.length > 0 && (
+  <div className="mt-5">
+    <h2 className="text-xl font-semibold">Certifications</h2>
+    <ul className="mt-3">
+      {tutor.certifications.map((certificate, index) => (
+        <li key={index} className="mb-2">
+          <a 
+            href={`${BASE_URL_IMAGE}uploads/${certificate}`} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
+            <img 
+              src={`${BASE_URL_IMAGE}uploads/${certificate}`} 
+              alt={`Certification ${index + 1}`} 
+              className="w-16 h-16 object-cover border rounded"
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
         <div className="mt-5">
   <h2 className="text-xl font-semibold">General Availability</h2>
   <table className="w-full mt-2 border-collapse border">

@@ -44,7 +44,7 @@ function LoginAdmin() {
 
       dispatch(login(user));
 
-      navigate('/admin/dashboard');
+      navigate('/admin/tutorVerfication');
     } catch (error) {
       setLoading(false);
       setErrorMessage(

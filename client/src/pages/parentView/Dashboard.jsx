@@ -12,7 +12,7 @@ function Dashboard() {
     day: "",
     time: "",
   });
-console.log(filters)
+
   const [availability, setAvailability] = useState([]); // Store availability array
 
   const updateAvailability = (selectedDay, selectedTime) => {

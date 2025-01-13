@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux'; 
+import { logout } from '../../../store/authSlice.js';
+const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 function Footer() {
+  const { user } = useSelector((state) => state.auth);
+
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [isDarkMode, setDarkMode] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
   const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
-  const toggleDarkMode = () => {
-    setDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark", !isDarkMode);
-  };
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+      console.log("Logging out...");
+       
+     
+      localStorage.removeItem('token'); 
+      localStorage.removeItem('user')
+      localStorage.setItem('isAuthenticated', 'false');
+     
+      dispatch(logout());
+    
+    };
 
-  useEffect(() => {
-    // Ensure theme persists on refresh
-    if (localStorage.getItem("theme") === "dark") {
-      setDarkMode(true);
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save theme preference
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
+ 
 
   return (
     <div>
@@ -74,7 +75,7 @@ function Footer() {
                   <span className="sr-only">Open user menu</span>
                   <img
                     className="w-8 h-8 rounded-full"
-                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
                     alt="user"
                   />
                 </button>
@@ -82,60 +83,22 @@ function Footer() {
                   <div className="z-50 absolute right-0 top-9 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600">
                     <div className="px-4 py-3">
                       <p className="text-sm text-gray-900 dark:text-white">
-                        Neil Sims
+                        {user?.name}
                       </p>
                       <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-                        neil.sims@flowbite.com
+                        {user?.email}
                       </p>
                     </div>
                     <ul className="py-1">
+                      
+                      
                       <li>
                         <button
-                          onClick={toggleDarkMode}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white w-full"
-                        >
-                          {isDarkMode ? (
-                            <>
-                              <svg
-                                className="w-5 h-5 me-2"
-                                fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                              >
-                                <path d="M17.75 21.994c-4.442.001-8.308-3.59-8.757-8.035-.047-.418.29-.959.742-.967.052-.001.106-.002.158-.002 2.761 0 5.413-1.601 6.593-4.067.357-.731-.113-1.469-.968-1.47-5.005-.009-9.113 3.94-9.115 8.778-.002 4.937 4.248 8.84 9.375 8.763.567-.007 1.083-.271 1.285-.73.297-.662-.003-1.527-.412-1.68-.313-.114-.64-.109-.921-.058z"></path>
-                              </svg>
-                              Light Mode
-                            </>
-                          ) : (
-                            <>
-                              <svg
-                                className="w-5 h-5 me-2"
-                                fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                              >
-                                <path d="M12 3a1 1 0 110 2 7 7 0 100 14 1 1 0 110 2 9 9 0 110-18z"></path>
-                              </svg>
-                              Dark Mode
-                            </>
-                          )}
-                        </button>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                          Dashboard
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                          onClick={handleLogout}
+                          className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                           Sign out
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </div>
@@ -155,6 +118,25 @@ function Footer() {
       >
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
+
+          <li className="mb-1">
+              <Link
+                to='/admin/tutorVerfication'
+                className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
+              >
+                <svg
+                  className="w-5 h-6 text-black transition duration-75 hover:bg-red-800  dark:text-black dark:hover:bg-gray-300"
+                  fill="currentColor"
+                  viewBox="0 0 22 21"
+                >
+                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
+                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
+                </svg>
+                <span className="ml-3">Tutor Verification</span>
+              </Link>
+            </li>
+
+
             <li className="mb-1">
               <Link
                 to='/admin/dashboard'
@@ -168,42 +150,12 @@ function Footer() {
                   <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
                   <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
                 </svg>
-                <span className="ml-3">Dashboard</span>
+                <span className="ml-3">Review Moderation</span>
               </Link>
             </li>
           
-            <li className="mb-1">
-              <Link
-                to=''
-                className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
-              >
-                <svg
-                  className="w-5 h-6 text-black transition duration-75 hover:bg-red-800  dark:text-black dark:hover:bg-gray-300"
-                  fill="currentColor"
-                  viewBox="0 0 22 21"
-                >
-                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
-                </svg>
-                <span className="ml-3">Tutors</span>
-              </Link>
-            </li>
-            <li className="mb-1">
-              <Link
-                to='/admin/addUser'
-                className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
-              >
-                <svg
-                  className="w-5 h-6 text-black transition duration-75 hover:bg-red-800  dark:text-black dark:hover:bg-gray-300"
-                  fill="currentColor"
-                  viewBox="0 0 22 21"
-                >
-                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
-                </svg>
-                <span className="ml-3">Parents</span>
-              </Link>
-            </li>
+            
+            
           </ul>
         </div>
       </aside>

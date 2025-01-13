@@ -46,6 +46,8 @@ import TutorDetail from "./pages/parentView/TutorDetail.jsx";
 import Messsages from "./pages/TutorView/Messsages.jsx";
 import CheckReviews from "./pages/TutorView/CheckReviews.jsx";
 import LoginAdmin from "./pages/auth/LoginAdmin.jsx";
+import TutorProfileDetail from "./pages/AdminView/TutorProfileDetail.jsx";
+import TutorVerfication from "./pages/AdminView/TutorVerfication.jsx";
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -77,7 +79,9 @@ function App() {
             </CheckAuth>
           }
         >
+          <Route path="tutorVerfication" element={<TutorVerfication/>}/>
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="tutorProfileDetail/:tutorId" element={<TutorProfileDetail/>}/>
           <Route path="addUser" element={<CreateUser/>}/>
           <Route path="updateUser/:userId" element={<UpdateUser/>}/>
         </Route>

@@ -19,8 +19,11 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// To track which user is connected
+const usersSockets = {}; // userId => socketId
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -37,20 +40,37 @@ app.use('/api/messages', messageRoutes); // NEW
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
+  // Save userId to socket mapping
+  socket.on("register", (userId) => {
+    usersSockets[userId] = socket.id; // Save userId with their corresponding socketId
+    console.log(`User ${userId} is now connected to socket ${socket.id}`);
+  });
+
   socket.on("send_message", (data) => {
     const { senderId, receiverId, content } = data;
 
-    // Emit message to the receiver
-    io.emit("receive_message", {
-      senderId,
-      receiverId,
-      content,
-      timestamp: new Date(),
-    });
+    // Emit the message to the receiver's socketId
+    const receiverSocket = usersSockets[receiverId];
+    if (receiverSocket) {
+      io.to(receiverSocket).emit("receive_message", {
+        senderId,
+        receiverId,
+        content,
+        timestamp: new Date(),
+      });
+      console.log(`Message from ${senderId} to ${receiverId} sent.`);
+    }
   });
 
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
+    // Remove the user from the mapping when they disconnect
+    for (const [userId, socketId] of Object.entries(usersSockets)) {
+      if (socketId === socket.id) {
+        delete usersSockets[userId];
+        break;
+      }
+    }
   });
 });
 

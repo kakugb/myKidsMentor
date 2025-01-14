@@ -11,8 +11,8 @@ function LandingPage() {
     <>
  <Header/>
  <LearningSteps/>
- <CommunitySize/>
- <Recomendation/>
+ {/* <CommunitySize/> */}
+ {/* <Recomendation/> */}
  <FrequentQuestions/>
         <Footer/>
     </>

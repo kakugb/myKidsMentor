@@ -1,14 +1,15 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+import "./parent.css";
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 const TutorDetail = () => {
-  const { user } = useSelector((state) => state.auth);  // Access user from Redux
-  const senderPhoneNumber = user?.phoneNumber;  
- 
+  const { user } = useSelector((state) => state.auth); // Access user from Redux
+  const senderPhoneNumber = user?.phoneNumber;
+
   const { tutorId } = useParams();
- 
+
   const [tutor, setTutor] = useState(null);
   const [tutorPhoneNumber, setTutorPhoneNumber] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -17,11 +18,10 @@ const TutorDetail = () => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(true);
-  const [visibleReviews, setVisibleReviews] = useState(3)
+  const [visibleReviews, setVisibleReviews] = useState(3);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
- 
-
+  const [isMessageBoxVisible, setIsMessageBoxVisible] = useState(false);
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -35,14 +35,14 @@ const TutorDetail = () => {
       Thu: "Thursday",
       Fri: "Friday",
       Sat: "Saturday",
-      Sun: "Sunday",
+      Sun: "Sunday"
     };
-  
+
     // Check if tutor is available on the given day and within the time range
     return tutor.availability.some((item) => {
       // Match the day
       if (item.day !== dayMapping[day]) return false;
-  
+
       // Check if the time range matches exactly
       return item.time === timeRange;
     });
@@ -50,11 +50,12 @@ const TutorDetail = () => {
 
   // Fetch Tutor details
   useEffect(() => {
-    
     const fetchTutorDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/tutor/${tutorId}`);
-        
+        const response = await axios.get(
+          `http://localhost:5000/api/tutor/${tutorId}`
+        );
+
         setTutor(response.data);
         setTutorPhoneNumber(response.data.phoneNumber);
       } catch (err) {
@@ -69,32 +70,30 @@ const TutorDetail = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/reviews/tutor/${tutorId}`);
+      const response = await axios.get(
+        `http://localhost:5000/api/reviews/tutor/${tutorId}`
+      );
       setReviews(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
   };
   useEffect(() => {
-   
-
     fetchReviews();
   }, [tutorId]);
 
-   // Calculate average rating
-   const averageRating = (
-    reviews.reduce((total, review) => total + review.rating, 0) / reviews.length || 0
+  // Calculate average rating
+  const averageRating = (
+    reviews.reduce((total, review) => total + review.rating, 0) /
+      reviews.length || 0
   ).toFixed(1);
-  
 
   const fetchMessages = async () => {
-    
     try {
-        
       const response = await axios.get(
         `http://localhost:5000/api/messages/userMessage?senderId=${user?.id}&receiverId=${tutorId}`
       );
-     console.log("message",response.data)
+      console.log("message", response.data);
       setMessages(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -103,49 +102,52 @@ const TutorDetail = () => {
     }
   };
 
-  useEffect(() => {  
-    fetchMessages()
+  useEffect(() => {
+    fetchMessages();
   }, [senderPhoneNumber, tutorPhoneNumber]);
-
 
   const handleAddReview = async () => {
     if (!rating || !comment.trim()) return; // Ensure rating and comment are not empty
 
     const reviewData = {
       tutor_id: tutorId,
-      parent_id: senderId,
+      parent_id: user?.id,
       rating: rating,
-      comment: comment,
+      comment: comment
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/reviews/add", reviewData);
+      const response = await axios.post(
+        "http://localhost:5000/api/reviews/add",
+        reviewData
+      );
       console.log("Review added:", response.data);
       // Optionally, you can update the reviews state to display the new review immediately
       setComment(""); // Clear the comment input
-      setRating(0);   // Reset the rating
+      setRating(0); // Reset the rating
       fetchReviews();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
   };
 
-
-
   const sendMessage = async () => {
     if (!messageText.trim()) return; // Don't send if the message is empty
-  
+
     const newMessage = {
-      senderId:user?.id,
+      senderId: user?.id,
       receiverId: tutorId,
-      content: messageText,  // Make sure this matches the backend field name
-      timestamp: new Date(),
+      content: messageText, // Make sure this matches the backend field name
+      timestamp: new Date()
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/messages/send", newMessage);
+      const response = await axios.post(
+        "http://localhost:5000/api/messages/send",
+        newMessage
+      );
       console.log("Message sent:", response.data);
-      fetchMessages() // Update UI with new message
+      fetchMessages(); // Update UI with new message
       setMessageText(""); // Clear the input field
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -156,7 +158,21 @@ const TutorDetail = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-console.log(tutor.certifications)
+
+  let certificationsArray = [];
+
+  // If it's a string, parse it
+  if (typeof tutor.certifications === "string") {
+    try {
+      certificationsArray = JSON.parse(tutor.certifications);
+    } catch (error) {
+      console.error("Error parsing certifications:", error);
+    }
+  } else if (Array.isArray(tutor.certifications)) {
+    // If it's already an array, use it directly
+    certificationsArray = tutor.certifications;
+  }
+
   return (
     <div className="container mx-auto p-5 lg:flex gap-10">
       {/* LEFT COLUMN: Tutor Details */}
@@ -164,8 +180,7 @@ console.log(tutor.certifications)
         {/* Profile Section */}
         <div className="flex gap-5 items-center">
           <img
-          
-          src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
+            src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
             alt="Tutor"
             className="w-24 h-24 object-cover rounded-full border"
           />
@@ -179,16 +194,39 @@ console.log(tutor.certifications)
         {/* About Section */}
         <div className="mt-5">
           <h2 className="text-xl font-semibold">About me</h2>
-          <p className="text-gray-700 mt-2">{tutor.about}</p>
         </div>
 
+        {/* Subjects Handled Section */}
+        <div className="mt-5">
+          <h2 className="text-xl font-semibold">Subjects Handled</h2>
+          <ul className="list-disc pl-5">
+            {tutor.subjectsTaught.map((subject, index) => (
+              <li key={index} className="text-gray-700">
+                {subject}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Grade Handled Section */}
+        <div className="mt-5">
+          <h2 className="text-xl font-semibold">Grade Handled</h2>
+          <ul className="list-disc pl-5">
+            {tutor.gradesHandled.map((Grade, index) => (
+              <li key={index} className="text-gray-700">
+                {Grade}
+              </li>
+            ))}
+          </ul>
+        </div>
         {/* Ratings and Reviews */}
         <div className="mt-5">
           <h2 className="text-xl font-semibold">Ratings & Reviews</h2>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-3xl font-bold">{averageRating}</span>
             <div className="text-yellow-400">
-              {"★".repeat(Math.round(averageRating)) + "☆".repeat(5 - Math.round(averageRating))}
+              {"★".repeat(Math.round(averageRating)) +
+                "☆".repeat(5 - Math.round(averageRating))}
             </div>
             <span className="text-gray-500">{`${reviews.length} review(s)`}</span>
           </div>
@@ -198,14 +236,18 @@ console.log(tutor.certifications)
               <div key={review.id} className="border-b pb-3 mb-3">
                 <div className="flex items-center gap-3">
                   <img
-                    src={review.parent.profilePicture || "https://via.placeholder.com/50"}
+                    src={
+                      review.parent.profilePicture ||
+                      "https://via.placeholder.com/50"
+                    }
                     alt={review.parent.name}
                     className="w-12 h-12 object-cover rounded-full border"
                   />
                   <div>
                     <p className="font-semibold">{review.parent.name}</p>
                     <div className="text-yellow-400">
-                      {"★".repeat(review.rating) + "☆".repeat(5 - review.rating)}
+                      {"★".repeat(review.rating) +
+                        "☆".repeat(5 - review.rating)}
                     </div>
                   </div>
                 </div>
@@ -224,7 +266,6 @@ console.log(tutor.certifications)
             )}
           </div>
 
-
           <div className="mt-5">
             <h3 className="text-lg font-semibold">Add a Review</h3>
             {/* {error && <p className="text-red-500">{error}</p>} */}
@@ -236,7 +277,9 @@ console.log(tutor.certifications)
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
-                    className={`cursor-pointer ${star <= rating ? "text-yellow-400" : "text-gray-400"}`}
+                    className={`cursor-pointer ${
+                      star <= rating ? "text-yellow-400" : "text-gray-400"
+                    }`}
                     onClick={() => setRating(star)}
                   >
                     ★
@@ -260,118 +303,163 @@ console.log(tutor.certifications)
               Submit Review
             </button>
           </div>
-        
         </div>
-
-        
-
 
         {/* Qualifications */}
         <div className="mt-5">
           <h2 className="text-xl font-semibold">Qualifications</h2>
           {tutor.qualifications}
         </div>
-        {Array.isArray(tutor.certifications) && tutor.certifications.length > 0 && (
-  <div className="mt-5">
-    <h2 className="text-xl font-semibold">Certifications</h2>
-    <ul className="mt-3">
-      {tutor.certifications.map((certificate, index) => (
-        <li key={index} className="mb-2">
-          <a 
-            href={`${BASE_URL_IMAGE}uploads/${certificate}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-600 underline"
-          >
-            <img 
-              src={`${BASE_URL_IMAGE}uploads/${certificate}`} 
-              alt={`Certification ${index + 1}`} 
-              className="w-16 h-16 object-cover border rounded"
-            />
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
+
+        {certificationsArray.length > 0 ? (
+          <div className="mt-5">
+            <h2 className="text-xl font-semibold">Certifications</h2>
+            <ul className="flex flex-wrap gap-x-6 mt-3">
+              {certificationsArray.map((certificate, index) => (
+                <li key={index} className="mb-2">
+                  <Link
+                    to={`${BASE_URL_IMAGE}uploads/${certificate}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    <img
+                      src={`${BASE_URL_IMAGE}uploads/${certificate}`}
+                      alt={`Certification ${index + 1}`}
+                      className="w-16 h-16 object-cover border rounded"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p>No certifications available</p>
+        )}
+
+        {/* City */}
+        <div className="mt-5">
+          <h2 className="text-xl font-semibold">city</h2>
+          {tutor.city}
+        </div>
 
         <div className="mt-5">
-  <h2 className="text-xl font-semibold">General Availability</h2>
-  <table className="w-full mt-2 border-collapse border">
-    <thead>
-      <tr>
-        <th className="border p-2">Time</th>
-        {daysOfWeek.map((day) => (
-          <th key={day} className="border p-2">
-            {day}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {tutor?.availability?.map((item) => (
-        <tr key={item.time}>
-          <td className="border p-2">{item.time}</td>
-          {daysOfWeek.map((day) => (
-            <td key={day} className="border p-2">
-              {isAvailable(day, item.time) ? "✓" : "x"}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+          <h2 className="text-xl font-semibold">General Availability</h2>
+          <table className="w-full mt-2 border-collapse border">
+            <thead>
+              <tr>
+                <th className="border p-2">Time</th>
+                {daysOfWeek.map((day) => (
+                  <th key={day} className="border p-2">
+                    {day}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {tutor?.availability?.map((item) => (
+                <tr key={item.time}>
+                  <td className="border p-2">{item.time}</td>
+                  {daysOfWeek.map((day) => (
+                    <td key={day} className="border p-2">
+                      {isAvailable(day, item.time) ? "✓" : "x"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* RIGHT COLUMN: Messages Section */}
-      <div className="lg:w-1/4 bg-white p-5 rounded-md shadow-md h-fit">
-        <h2 className="text-xl font-semibold mb-3">Send {tutor.name} a message</h2>
-        
-        {/* Display Messages */}
-        <div className="mb-3 h-64 overflow-y-scroll border p-3">
-  {loadingMessages ? (
-    <p>Loading messages...</p>
-  ) : messages.messages? ( // Check if there are messages
-    messages.messages.map((message, index) => (
-      <div
-        key={index}
-         className={`mb-2 ${message.senderPhoneNumber === senderPhoneNumber ? "text-right" : ""}`}
-      >
-        <p
-          className={
-            message.senderPhoneNumber === senderPhoneNumber ? "text-green-600" : "text-blue-600"
-          }
+      <div className="relative">
+        {/* Message Box */}
+        {isMessageBoxVisible && (
+          <div className="lg:w-1/4 bg-white p-5 rounded-md  h-fit fixed bottom-20 right-5 z-50 transition-all ease-in-out duration-300  shadow-md shadow-slate-400">
+            <div className="flex gap-x-2 border-b-2">
+              <img
+                src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
+                alt="Tutor"
+                className="w-10 h-10 object-cover rounded-full border"
+              />
+              <span className="text-xl font-semibold my-auto">
+                {tutor.name}
+              </span>
+            </div>
+
+            {/* Display Messages */}
+            <div className="mb-3 h-64 overflow-y-auto p-3 no-scrollbar">
+              {loadingMessages ? (
+                <p>Loading messages...</p>
+              ) : messages.messages ? (
+                messages.messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`mb-2 ${
+                      message.senderPhoneNumber === senderPhoneNumber
+                        ? "text-right"
+                        : ""
+                    }`}
+                  >
+                    <p
+                      className={
+                        message.senderPhoneNumber === senderPhoneNumber
+                          ? "text-green-600"
+                          : "text-blue-600"
+                      }
+                    >
+                      {message.content}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center">
+                  No conversation yet.
+                </p>
+              )}
+            </div>
+
+            {/* Message Input Form */}
+            <div>
+              <textarea
+                placeholder={`Hi, I’m looking for a tutor...`}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                className="w-full p-2 border rounded-md mb-3"
+                rows="5"
+              ></textarea>
+              <button
+                onClick={sendMessage}
+                className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+              >
+                Send a message
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Expected response time: 24h
+            </p>
+          </div>
+        )}
+
+        {/* Floating Message Icon */}
+        <div
+          className="fixed bottom-5 right-5 bg-blue-600 text-white p-4 rounded-full cursor-pointer shadow-lg z-50"
+          onClick={() => setIsMessageBoxVisible(!isMessageBoxVisible)} // Toggle visibility of the message box
         >
-          {message.content}
-        </p>
-        {/* <p className="text-xs text-gray-500">{new Date(message.timestamp).toLocaleString()}</p> */}
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 text-center">No conversation yet.</p> // Display message if no messages
-  )}
-</div>
-
-
-        {/* Message Input Form */}
-        <div>
-      <textarea
-        placeholder={`Hi, I’m looking for a tutor...`}
-        value={messageText}
-        onChange={(e) => setMessageText(e.target.value)}
-        className="w-full p-2 border rounded-md mb-3"
-        rows="5"
-      ></textarea>
-      <button
-        onClick={sendMessage}
-        className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
-      >
-        Send a message
-      </button>
-      {/* {error && <p className="text-red-500">{error}</p>} */}
-    </div>
-        <p className="text-xs text-gray-500 mt-2">Expected response time: 24h</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              fillRule="evenodd"
+              d="M3 3C2.44772 3 2 3.44772 2 4V16C2 16.5523 2.44772 17 3 17H18L23 21V4C23 3.44772 22.5523 3 22 3H3ZM3 1C1.34315 1 0 2.34315 0 4V16C0 17.6569 1.34315 19 3 19H18L23 24V4C23 2.34315 21.6569 1 20 1H3Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   );

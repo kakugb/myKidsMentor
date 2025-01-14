@@ -200,10 +200,10 @@ const TutorRegistration = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div className="bg-rose-50 min-h-screen flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 w-1/2 mx-auto">
         <h1 className="text-3xl font-bold text-center mb-8">
-          Account Setup Wizard
+           Tutor Registration Form
         </h1>
 
         {/* Progress Bar */}
@@ -473,7 +473,7 @@ const TutorRegistration = () => {
                   <input
                     type="text"
                     name="time"
-                    placeholder="e.g., 12:00pm to 4:00pm"
+                    placeholder="e.g., 12:00PM  4:00PM"
                     value={newAvailability.time}
                     onChange={handleAvailabilityChange}
                     className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full"
@@ -509,22 +509,34 @@ const TutorRegistration = () => {
                 </ul>
               </div>
               <div className="mb-3">
-                <label
-                  htmlFor="city"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  City
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                  required
-                />
-              </div>
+  <label
+    htmlFor="city"
+    className="block mb-2 text-sm font-medium text-gray-900"
+  >
+    City
+  </label>
+  <select
+    id="city"
+    name="city"
+    value={formData.city} // Assuming you're using formData for managing state
+    onChange={handleChange} // Handles the form input change
+    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+    required
+  >
+    <option value="">Select City</option>
+    <option value="karachi">Karachi</option>
+    <option value="lahore">Lahore</option>
+    <option value="islamabad">Islamabad</option>
+    <option value="rawalpindi">Rawalpindi</option>
+    <option value="faisalabad">Faisalabad</option>
+    <option value="peshawar">Peshawar</option>
+    <option value="quetta">Quetta</option>
+    <option value="multan">Multan</option>
+    <option value="sialkot">Sialkot</option>
+    <option value="hyderabad">Hyderabad</option>
+  </select>
+</div>
+
               <div className="mb-3">
                 <label
                   htmlFor="postcode"
@@ -595,7 +607,7 @@ const TutorRegistration = () => {
               </button>
             )}
           </div>
-          <p className="text-right pt-6">
+          <p className="text-right pt-6 text-blue-500 font-semibold">
             Already have account ?
             <Link
               to="/loginTutor"

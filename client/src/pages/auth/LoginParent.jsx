@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
-import DealBabaImg from '../../assets/DealBabaimg.png'
+import parentLoginMain from '../../assests/parentLoginMain.jpg'
 function LoginParent() {
  
   const [email, setEmail] = useState('');
@@ -58,11 +58,11 @@ function LoginParent() {
 <div class="bg-gray-100 flex justify-center items-center h-screen">
 
 <div class="w-1/2 h-screen hidden lg:block">
-  <img src="https://placehold.co/800x/667fff/ffffff.png?text=Your+Image&font=Montserrat" alt="Placeholder Image" class="object-cover w-full h-full"/>
+  <img src={parentLoginMain} alt="Placeholder Image" class="object-cover w-full h-full"/>
 </div>
 
 <div class="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-  <h1 class="text-2xl font-semibold mb-4">Login</h1>
+  <h1 class="text-4xl font-bold mb-10 text-center">Parent Login</h1>
   <form onSubmit={handleLogin}>
 
     <div class="mb-4">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
+import parentRegister from '../../assests/parentLogin.jpeg'
 function Register() {
   const [formData, setFormData] = useState({
     name: '',
@@ -57,11 +57,11 @@ function Register() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center font-[sans-serif] bg-gradient-to-r from-blue-800 to-blue-500 lg:h-screen p-6">
+      <div className="flex flex-col justify-center items-center font-[sans-serif] bg-rose-50 lg:h-screen p-6">
         <div className="grid md:grid-cols-2 items-center gap-y-8 bg-white max-w-7xl w-full shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
           <div className="w-full h-full">
             <img
-              src=""
+              src={parentRegister}
               alt="Register illustration"
               className="w-full h-full"
             />
@@ -69,7 +69,7 @@ function Register() {
 
           <form onSubmit={handleSubmit} className="sm:p-8 p-4 w-full">
             <div className="mb-12">
-              <h3 className="text-blue-500 text-3xl font-extrabold max-md:text-center">Register</h3>
+              <h3 className="text-black text-4xl font-bold text-center">Parent Registeration</h3>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
@@ -135,7 +135,7 @@ function Register() {
               >
                 Sign up
               </button>
-              <p className="flex justify-end text-sm text-gray-600 font-semibold">
+              <p className="flex justify-end text-sm text-blue-600 font-semibold">
                 Already registered?
                 <Link
                   to="/loginParent"

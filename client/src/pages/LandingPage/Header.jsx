@@ -22,24 +22,24 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
-const products = [
-  { name: 'All Subjects', icon: ChartPieIcon },
-  { name: 'Math', icon: CursorArrowRaysIcon },
-  { name: 'Chemistry',  icon: FingerPrintIcon },
-  { name: 'Physics', icon: SquaresPlusIcon },
-  { name: 'English', icon: ArrowPathIcon },
-]
-const callsToAction = [
-  { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon },
-]
+// const products = [
+//   { name: 'All Subjects', icon: ChartPieIcon },
+//   { name: 'Math', icon: CursorArrowRaysIcon },
+//   { name: 'Chemistry',  icon: FingerPrintIcon },
+//   { name: 'Physics', icon: SquaresPlusIcon },
+//   { name: 'English', icon: ArrowPathIcon },
+// ]
+// const callsToAction = [
+//   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
+//   { name: 'Contact sales', href: '#', icon: PhoneIcon },
+// ]
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="bg-white">
-      <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+    <div className="bg-rose-50">
+      <nav aria-label="Global" className="w-full flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
           <Link to='/home' className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
@@ -50,6 +50,7 @@ export default function Header() {
             />
           </Link>
         </div>
+
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -60,28 +61,10 @@ export default function Header() {
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
         </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold text-gray-900">
-              Resource
-              <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-            </PopoverButton>
-            <PopoverPanel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md bg-white shadow-lg ring-1 ring-gray-900/5">
-              <div className="p-4">
-                {products.map((item) => (
-                  <div key={item.name} className="group flex items-center gap-x-6 p-4 hover:bg-gray-50">
-                    <item.icon className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" />
-                    <div>
-                      <Link to='' className="block font-semibold text-gray-900">
-                        {item.name}
-                      </Link>
-                     
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </PopoverPanel>
-          </Popover>
+        
+        <div className=" lg:flex lg:flex-1 lg:justify-end gap-x-5">
+          <PopoverGroup className="hidden lg:flex lg:gap-x-12 my-auto">
+         
           <Link to="/tutor" className="text-sm font-semibold text-gray-900">
             Find a tutor
           </Link>
@@ -95,7 +78,6 @@ export default function Header() {
             Become a tutor
           </Link>
         </PopoverGroup>
-        <div className=" lg:flex lg:flex-1 lg:justify-end gap-x-5">
         <button className='bg-red-800 text-white px-5 rounded-md'>
                <Link
                   to="/logins"
@@ -139,24 +121,7 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Resource
-                    <ChevronDownIcon aria-hidden="true" className="size-5 flex-none group-data-[open]:rotate-180" />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 space-y-2">
-                    {[...products, ...callsToAction].map((item) => (
-                      <DisclosureButton
-                        key={item.name}
-                        as="a"
-                        to=''
-                        className="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      >
-                        {item.name}
-                      </DisclosureButton>
-                    ))}
-                  </DisclosurePanel>
-                </Disclosure>
+              
                 <Link
                   to='/feature'
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"

@@ -4,6 +4,7 @@ const User = require('../models/user.js');
 exports.filterTutors = async (req, res) => {
     try {
         const { subjectsTaught, gradesHandled, availability, hourlyRates, city } = req.query;
+        console.log(city)
         let conditions = [];
         conditions.push({ role: 'tutor' });
 
@@ -25,37 +26,38 @@ exports.filterTutors = async (req, res) => {
             });
         }
 
-        // Filter by city with case-insensitive regex
-        if (city) {
-            conditions.push({
-                city: {
-                    [Op.regexp]: `(?i)${city}`, // Regex matching for city
-                },
-            });
-        }
+       // Always add the city filter if it exists
+       if (city) {
+        const sanitizedCity = city.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&'); // Escape special regex characters
+        conditions.push({
+            city: {
+                [Op.regexp]: `^${sanitizedCity}$`, // Case-insensitive matching
+            },
+        });
+    }
 
         // Filter by availability with regex
-        if (availability) {
-            let availabilityList;
-            try {
-                availabilityList = typeof availability === 'string' ? JSON.parse(availability) : availability;
-            } catch (error) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid availability format. It must be a valid JSON string representing an array.',
-                });
-            }
+        // if (availability) {
+        //     let availabilityList;
+        //     try {
+        //         availabilityList = typeof availability === 'string' ? JSON.parse(availability) : availability;
+        //     } catch (error) {
+        //         return res.status(400).json({
+        //             success: false,
+        //             message: 'Invalid availability format. It must be a valid JSON string representing an array.',
+        //         });
+        //     }
 
-            const availabilityRegex = availabilityList
-                .map(item => `${item.day}.*${item.time}`) // Create regex for each day/time pair
-                .join('|');
+        //     const availabilityRegex = availabilityList
+        //         .map(item => `${item.day}.*${item.time}`) // Create regex for each day/time pair
+        //         .join('|');
 
-            conditions.push({
-                availability: {
-                    [Op.regexp]: availabilityRegex, // Regex matching for availability
-                },
-            });
-        }
+        //     conditions.push({
+        //         availability: {
+        //             [Op.regexp]: availabilityRegex, // Regex matching for availability
+        //         },
+        //     });
+        // }
 
         // Filter by hourlyRates (exact match)
         if (hourlyRates) {
@@ -80,7 +82,7 @@ exports.filterTutors = async (req, res) => {
                 [Op.and]: conditions, // Ensure all conditions must match
             },
         });
-
+console.log(tutors)
         if (tutors.length > 0) {
             return res.status(200).json({
                 success: true,

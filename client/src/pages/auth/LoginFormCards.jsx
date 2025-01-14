@@ -1,15 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
+import parentLogin from '../../assests/parentLogin.jpeg';
+import tutorLogin from '../../assests/tutorLogin.jpg'
 function LoginFormCards() {
   return (
     <>
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen bg-rose-50">
   <div class="grid gap-8 md:grid-cols-2">
     
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="w-10/12 bg-rose-100 shadow-md rounded-lg overflow-hidden shadow-slate-400">
       <img
-        src="https://via.placeholder.com/150"
+        src={tutorLogin}
         alt="Tutor"
         class="w-full h-52 object-cover"
       />
@@ -27,9 +28,9 @@ function LoginFormCards() {
     </div>
 
     
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="w-10/12 bg-rose-100 shadow-md rounded-lg overflow-hidden shadow-slate-400">
       <img
-        src="https://via.placeholder.com/150"
+        src={parentLogin}
         alt="Parent"
         class="w-full h-52 object-cover"
       />

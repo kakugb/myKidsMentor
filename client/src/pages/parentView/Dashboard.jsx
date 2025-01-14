@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function Dashboard() {
-  const [tutors, setTutors] = useState([]);
+  const [tutorsWithReviews, setTutorsWithReviews] = useState([]); // Store tutors with their reviews
   const [filters, setFilters] = useState({
     subject: "",
     level: "",
@@ -12,7 +12,9 @@ function Dashboard() {
     day: "",
     time: "",
   });
-
+  const [messages, setMessage] = useState([]);
+ 
+  const [error, setError] = useState(null);
   const [availability, setAvailability] = useState([]); // Store availability array
 
   const updateAvailability = (selectedDay, selectedTime) => {
@@ -35,6 +37,8 @@ function Dashboard() {
       return newFilters;
     });
   };
+  
+ 
 
   const handleApplyFilters = async () => {
     try {
@@ -46,41 +50,73 @@ function Dashboard() {
         hourlyRates: filters.price,
         city: filters.city,
       };
-      
   
       const response = await axios.get(
         "http://localhost:5000/api/filterTutor/filter",
         { params: filterParams }
       );
-      // Ensure that the response is an array before setting the state
-      if (Array.isArray(response.data.data)) {
-        setTutors(response.data.data);
+  
+      // Ensure that the response contains valid data
+      if (Array.isArray(response.data.data) && response.data.data.length > 0) {
+        setTutorsWithReviews(response.data.data); // Update tutors if data is valid
       } else {
-        setTutors([]); // In case response is not an array, reset the tutors list
+        setTutorsWithReviews([]); // Clear tutors if data is empty
+        setMessage(response.data.message || "No tutors found matching the filters."); // Set error message
       }
     } catch (error) {
       console.error("Error fetching filtered tutors:", error);
-      setTutors([]); // Clear tutors in case of error
+      setTutorsWithReviews([]); // Clear tutors in case of error
+      setError("An error occurred while fetching tutors. Please try again later."); // Display a generic error message
     }
   };
   
+  
 
+  const fetchReviews = async (tutorId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/reviews/tutor/${tutorId}`
+      );
+      return response.data;
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+      return [];
+    }
+  };
+
+  
+ 
 
   useEffect(() => {
-    // Fetch all tutors when the component loads
     const fetchTutors = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/tutor/allprofile"
         );
-        setTutors(response.data.tutors);
+        const tutorsData = response.data.tutors;
+  
+        // Fetch reviews for each tutor and attach them
+        const tutorsWithReviews = await Promise.all(
+          tutorsData.map(async (tutor) => {
+            const reviews = await fetchReviews(tutor.id); // Fetch reviews for each tutor
+            const averageRating = (
+              reviews.reduce((total, review) => total + review.rating, 0) / 
+              reviews.length || 0
+            ).toFixed(1);
+  
+            return { ...tutor, reviews, averageRating };
+          })
+        );
+        
+        setTutorsWithReviews(tutorsWithReviews);
       } catch (error) {
         console.error("Error fetching tutors:", error);
       }
     };
-
+  
     fetchTutors();
   }, []);
+  
 
   return (
     <div>
@@ -194,7 +230,7 @@ function Dashboard() {
             <option value="peshawar">Peshawar</option>
             <option value="quetta">Quetta</option>
             <option value="multan">Multan</option>
-            <option value="sialkot">Sialkot</option>
+            <option value="sialkot">Sialkot</option> 
             <option value="hyderabad">Hyderabad</option>
           </select>
         </div>
@@ -263,54 +299,60 @@ function Dashboard() {
 
       {/* Tutor Cards */}
       <div className="max-w-6xl p-6">
+ 
+ 
+ 
 
-{tutors.length > 0 ? (
-  tutors.map((tutor) => (
-    <Link
-      to={`/parent/tutorDetail/${tutor.id}`} // Replace with your desired route for tutor details
-      key={tutor.id}
-      className="block" // Ensure it behaves like a block to make the whole card clickable
-    >
-      <div className="flex items-center mb-10 border rounded-lg shadow-lg bg-white overflow-hidden">
-        {/* Profile Picture */}
-        <div className="w-1/4 h-44">
-          <img
-            src={tutor.profilePicture || "https://via.placeholder.com/150"}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Profile Details */}
-        <div className="w-2/4 p-4">
-          <h2 className="text-lg font-bold mb-1">{tutor.name}</h2>
-          <p className="text-sm text-gray-600 font-semibold mb-2">
-            {tutor.qualifications}
-          </p>
-          <p className="text-sm text-gray-700 leading-snug">
-            Subjects: {tutor.subjectsTaught.join(", ")}
-          </p>
-        </div>
-
-        {/* Hourly Rates & Rating */}
-        <div className="w-1/4 p-4 text-right">
-          <p className="text-lg font-semibold text-gray-800 line-through">
-            ${tutor.hourlyRates}
-            <span className="text-blue-500 font-bold text-lg no-underline">
-              /hr
-            </span>
-          </p>
-          <div className="flex items-center justify-end text-yellow-400 text-sm mt-1">
-            ⭐ <span className="text-gray-600 ml-1">0 / 5</span>
+      <div className="max-w-6xl p-6">
+  {tutorsWithReviews.length > 0 ? (
+    tutorsWithReviews.map((tutor) => (
+      <Link
+        to={`/parent/tutorDetail/${tutor.id}`} // Replace with your desired route for tutor details
+        key={tutor.id}
+        className="block" // Ensure it behaves like a block to make the whole card clickable
+      >
+        <div className="flex items-center mb-10 border rounded-lg shadow-lg bg-white overflow-hidden">
+          {/* Profile Picture */}
+          <div className="w-1/4 h-44">
+            <img
+              src={tutor.profilePicture || "https://via.placeholder.com/150"}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
-          <p className="text-sm text-gray-500 mt-1">New tutor</p>
+
+          {/* Profile Details */}
+          <div className="w-2/4 p-4">
+            <h2 className="text-lg font-bold mb-1">{tutor.name}</h2>
+            <p className="text-sm text-gray-600 font-semibold mb-2">
+              {tutor.qualifications}
+            </p>
+            <p className="text-sm text-gray-700 leading-snug">
+              Subjects: {tutor.subjectsTaught.join(", ")}
+            </p>
+          </div>
+
+          {/* Hourly Rates & Rating */}
+          <div className="w-1/4 p-4 text-right">
+            <p className="text-lg font-semibold text-gray-800 line-through">
+              ${tutor.hourlyRates}
+              <span className="text-blue-500 font-bold text-lg no-underline">
+                /hr
+              </span>
+            </p>
+            <div className="flex items-center justify-end text-yellow-400 text-sm mt-1">
+              ⭐ <span className="text-gray-600 ml-1">{tutor.averageRating} / 5</span>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">New tutor</p>
+          </div>
         </div>
-      </div>
-    </Link>
-  ))
-) : (
-  <p>No tutors found</p> // Show a message if no tutors are available
-)}
+      </Link>
+    ))
+  ) : (
+    messages && <p>No tutors found</p> // Show a message if no tutors are available
+  )}
+</div>
+
 
 </div>
 

@@ -155,12 +155,12 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
                 <div
                   key={index}
                   className={`flex ${
-                    message.senderPhoneNumber === senderPhoneNumber ? 'justify-end' : 'justify-start'
+                    message.senderId === senderId ? 'justify-end' : 'justify-start'
                   }`}
                 >
                   <div
                     className={`p-3 rounded-lg ${
-                      message.senderPhoneNumber === senderPhoneNumber
+                      message.senderId === senderId
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-200 text-gray-900'
                     } max-w-xs`}

@@ -9,7 +9,7 @@ const TutorDetail = () => {
   const senderPhoneNumber = user?.phoneNumber;
 
   const { tutorId } = useParams();
-
+  const [showReviewForm, setShowReviewForm] = useState(false)
   const [tutor, setTutor] = useState(null);
   const [tutorPhoneNumber, setTutorPhoneNumber] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -161,7 +161,7 @@ const TutorDetail = () => {
 
   let certificationsArray = [];
 
-  // If it's a string, parse it
+
   if (typeof tutor.certifications === "string") {
     try {
       certificationsArray = JSON.parse(tutor.certifications);
@@ -169,14 +169,16 @@ const TutorDetail = () => {
       console.error("Error parsing certifications:", error);
     }
   } else if (Array.isArray(tutor.certifications)) {
-    // If it's already an array, use it directly
     certificationsArray = tutor.certifications;
   }
 
+  const handleToggleReviewForm = () => {
+    setShowReviewForm(!showReviewForm); // Toggle the review form visibility
+  };
   return (
-    <div className="container mx-auto p-5 lg:flex gap-10">
+    <div className="container mx-auto p-5 lg:flex gap-10 ">
       {/* LEFT COLUMN: Tutor Details */}
-      <div className="lg:w-3/4 bg-white p-5 rounded-md shadow-md">
+      <div className="lg:w-3/4  p-5 rounded-md shadow-md">
         {/* Profile Section */}
         <div className="flex gap-5 items-center">
           <img
@@ -218,92 +220,97 @@ const TutorDetail = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div> 
         {/* Ratings and Reviews */}
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">Ratings & Reviews</h2>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="text-3xl font-bold">{averageRating}</span>
-            <div className="text-yellow-400">
-              {"★".repeat(Math.round(averageRating)) +
-                "☆".repeat(5 - Math.round(averageRating))}
-            </div>
-            <span className="text-gray-500">{`${reviews.length} review(s)`}</span>
-          </div>
+      <h2 className="text-xl font-semibold flex items-center gap-2">
+        Ratings & Reviews
+        {/* Pen Icon/Button to toggle the review form */}
+        <button onClick={handleToggleReviewForm} className="text-gray-600">
+          ✏️
+        </button>
+      </h2>
 
-          <div className="mt-3">
-            {reviews.slice(0, visibleReviews).map((review) => (
-              <div key={review.id} className="border-b pb-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={
-                      review.parent.profilePicture ||
-                      "https://via.placeholder.com/50"
-                    }
-                    alt={review.parent.name}
-                    className="w-12 h-12 object-cover rounded-full border"
-                  />
-                  <div>
-                    <p className="font-semibold">{review.parent.name}</p>
-                    <div className="text-yellow-400">
-                      {"★".repeat(review.rating) +
-                        "☆".repeat(5 - review.rating)}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-700 mt-2">{review.comment}</p>
-              </div>
-            ))}
-
-            {/* See More Button */}
-            {visibleReviews < reviews.length && (
-              <button
-                onClick={handleSeeMoreReviews}
-                className="mt-3 text-blue-600 underline hover:text-blue-800"
-              >
-                See more reviews
-              </button>
-            )}
-          </div>
-
-          <div className="mt-5">
-            <h3 className="text-lg font-semibold">Add a Review</h3>
-            {/* {error && <p className="text-red-500">{error}</p>} */}
-            <div className="flex items-center mt-2">
-              <span className="text-yellow-400">
-                {"★".repeat(rating) + "☆".repeat(5 - rating)}
-              </span>
-              <div className="flex gap-1 ml-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span
-                    key={star}
-                    className={`cursor-pointer ${
-                      star <= rating ? "text-yellow-400" : "text-gray-400"
-                    }`}
-                    onClick={() => setRating(star)}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Write your review here"
-              className="w-full p-2 border rounded-md mt-2"
-              rows="4"
-            ></textarea>
-
-            <button
-              onClick={handleAddReview}
-              className="w-full bg-blue-600 text-white py-2 rounded-md mt-3 hover:bg-blue-700"
-            >
-              Submit Review
-            </button>
-          </div>
+      <div className="flex items-center gap-2 mt-2">
+        <span className="text-3xl font-bold">{averageRating}</span>
+        <div className="text-yellow-400">
+          {"★".repeat(Math.round(averageRating)) + "☆".repeat(5 - Math.round(averageRating))}
         </div>
+        <span className="text-gray-500">{`${reviews.length} review(s)`}</span>
+      </div>
+
+      <div className="mt-3">
+        {reviews.slice(0, visibleReviews).map((review) => (
+          <div key={review.id} className="border-b pb-3 mb-3">
+            <div className="flex items-center gap-3">
+              <img
+                src={`${BASE_URL_IMAGE}uploads/${review.parent.profilePicture}`}
+                alt={review.parent.name}
+                className="w-12 h-12 object-cover rounded-full border"
+              />
+              <div>
+                <p className="font-semibold">{review.parent.name}</p>
+                <div className="text-yellow-400">
+                  {"★".repeat(review.rating) + "☆".repeat(5 - review.rating)}
+                </div>
+              </div>
+            </div>
+            <p className="text-gray-700 mt-2">{review.comment}</p>
+          </div>
+        ))}
+
+        {/* See More Button */}
+        {visibleReviews < reviews.length && (
+          <button
+            onClick={handleSeeMoreReviews}
+            className="mt-3 text-blue-600 underline hover:text-blue-800"
+          >
+            See more reviews
+          </button>
+        )}
+      </div>
+
+      {/* Add Review Form - Initially hidden */}
+      {showReviewForm && (
+        <div className="mt-5">
+          <h3 className="text-lg font-semibold">Add a Review</h3>
+          <div className="flex items-center mt-2">
+            <span className="text-yellow-400">
+              {"★".repeat(rating) + "☆".repeat(5 - rating)}
+            </span>
+            <div className="flex gap-1 ml-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`cursor-pointer ${
+                    star <= rating ? "text-yellow-400" : "text-gray-400"
+                  }`}
+                  onClick={() => setRating(star)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Write your review here"
+            className="w-full p-2 border rounded-md mt-2"
+            rows="4"
+          ></textarea>
+
+          <button
+            onClick={handleAddReview}
+            className="w-full bg-blue-600 text-white py-2 rounded-md mt-3 hover:bg-blue-700"
+          >
+            Submit Review
+          </button>
+        </div>
+      )}
+    </div>
+
 
         {/* Qualifications */}
         <div className="mt-5">
@@ -376,7 +383,7 @@ const TutorDetail = () => {
       <div className="relative">
         {/* Message Box */}
         {isMessageBoxVisible && (
-          <div className="lg:w-1/4 bg-white p-5 rounded-md  h-fit fixed bottom-20 right-5 z-50 transition-all ease-in-out duration-300  shadow-md shadow-slate-400">
+          <div className="lg:w-1/4 bg-white p-5 rounded-md  h-fit fixed bottom-20 right-5 z-50 transition-all ease-in-out duration-300  ">
             <div className="flex gap-x-2 border-b-2">
               <img
                 src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}

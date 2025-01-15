@@ -1,8 +1,9 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
+import logo from '../../assests/Logo.svg'
 function Footer() {
   return (
-<footer class="w-full py-14 bg-rose-50">
+<footer class="w-full py-14 ">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ">
             <div class="border-b border-gray-200 ">
               
@@ -10,13 +11,15 @@ function Footer() {
           
             <div class="grid grid-cols-2 min-[690px]:grid-cols-4 lg:grid-cols-6 gap-4 xl:gap-8 pt-14 pb-10 max-w-xs mx-auto min-[690px]:max-w-2xl lg:max-w-full">
                 <div class="col-span-full mb-10 lg:col-span-2 lg:mb-0">
-                    <Link to="https://pagedone.io/"  class="flex justify-center lg:justify-start py-6">
-                        <h1 className='text-4xl font-bold'>MyKidsMentor</h1>
-                    </Link>
-                    
-                    <Link to=''  class="py-2.5 px-5  h-9 block w-fit bg-indigo-600 rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-indigo-700 lg:mx-0">
-                        Contact us
-                    </Link>
+                   <Link
+                               to="/landing"
+                               className="-m-1.5 p-1.5 flex gap-x-2 text-teal-700"
+                             >
+                               <img alt="" src={logo} className="h-20 w-auto" />
+                               <h1 className="hidden sm:flex items-center text-2xl font-bold">
+                                 Mykids Mentor
+                               </h1>
+                             </Link>
                 </div>
                
                 {/* <div class="lg:mx-auto text-left ">
@@ -58,7 +61,7 @@ function Footer() {
            
             <div class="py-7 border-t border-gray-200">
                 <div class="flex items-center justify-center flex-col lg:justify-between lg:flex-row">
-                    <span class="text-sm text-gray-500 ">©<a href="https://pagedone.io/">pagedone</a>2024, All rights reserved.</span>
+                    <span class="text-sm text-gray-500 ">©<a href="https://pagedone.io/">mykids Mentor </a>2024, All rights reserved.</span>
                     <div class="flex mt-4 space-x-4 sm:justify-center lg:mt-0 ">
                         <Link to=''  class="w-8 h-8 rounded-full transition-all duration-500 flex justify-center items-center bg-[#33CCFF] hover:bg-gray-900">
                           <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">

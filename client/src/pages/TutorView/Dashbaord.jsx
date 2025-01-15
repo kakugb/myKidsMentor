@@ -31,19 +31,53 @@ const Dashboard = () => {
   ];
 
   const handleSubjectsChange = (selectedOptions) => {
-    // Assuming you're storing the selected options in an array in formData
+    const newSubjects = selectedOptions.map((option) => option.value);
+
+    // Merge new subjects with the previous ones, ensuring no duplicates
     setFormData({
       ...formData,
-      subjectsTaught: selectedOptions.map((option) => option.value) // Extract values
+      subjectsTaught: [
+        ...new Set([...formData.subjectsTaught, ...newSubjects]) // Using Set to ensure uniqueness
+      ]
     });
   };
 
+  const filteredSubjectOptions = subjectOptions.filter(
+    (option) => !formData.subjectsTaught.includes(option.value)
+  );
+
   const handleGradesChange = (selectedOptions) => {
-    // Assuming you're storing the selected options in an array in formData
+    const newGrades = selectedOptions.map((option) => option.value);
+
+    // Merge new grades with the previous ones, ensuring no duplicates
     setFormData({
       ...formData,
-      gradesHandled: selectedOptions.map((option) => option.value) // Extract values
+      gradesHandled: [
+        ...new Set([...formData.gradesHandled, ...newGrades]) // Using Set to ensure uniqueness
+      ]
     });
+  };
+
+  const filteredGradeOptions = gradeOptions.filter(
+    (option) => !formData.gradesHandled.includes(option.value)
+  );
+
+  const removeSubject = (subjectToRemove) => {
+    // Remove the subject from the formData.subjectsTaught array
+    setFormData((prev) => ({
+      ...prev,
+      subjectsTaught: prev.subjectsTaught.filter(
+        (subject) => subject !== subjectToRemove
+      )
+    }));
+  };
+  const removeGrade = (gradeToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      gradesHandled: prev.gradesHandled.filter(
+        (grade) => grade !== gradeToRemove
+      )
+    }));
   };
 
   const [newAvailability, setNewAvailability] = useState({ day: "", time: "" });
@@ -97,20 +131,23 @@ const Dashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formDataToSend = new FormData();
-  
+
     // Only append the fields that need to be sent
     formDataToSend.append("phoneNumber", formData.phoneNumber);
     formDataToSend.append("hourlyRates", formData.hourlyRates);
     formDataToSend.append("city", formData.city);
     formDataToSend.append("postcode", formData.postcode);
-  
+
     // Append certifications only if new files are selected (not profilePicture)
     if (formData.qualifications) {
-      formDataToSend.append("qualifications", JSON.stringify(formData.qualifications));
+      formDataToSend.append(
+        "qualifications",
+        JSON.stringify(formData.qualifications)
+      );
     }
-  
+
     // Append arrays (availability, subjectsTaught, gradesHandled)
     formData.availability.forEach((item, index) => {
       formDataToSend.append(`availability[${index}]`, JSON.stringify(item)); // Ensuring proper format
@@ -121,36 +158,38 @@ const Dashboard = () => {
     formData.gradesHandled.forEach((grade) => {
       formDataToSend.append("gradesHandled[]", grade); // Use '[]' for array fields
     });
-  
+
     // If a new profile picture is selected, add it to the form data
     if (formData.profilePicture) {
       formDataToSend.append("profilePicture", formData.profilePicture);
     }
-  
+
     console.log(...formDataToSend.entries());
-  
+
     try {
       const token = localStorage.getItem("token");
       // Assuming the tutor's ID is available from the state or context (e.g., formData.id)
       const apiUrl = `http://localhost:5000/api/tutor/profile/${formData.id}`;
-  
+
       const response = await axios.put(apiUrl, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data", // Ensures correct handling of the form data
           Authorization: `Bearer ${token}` // Adds the Authorization header
         }
       });
-  
-      // Log the response data for debugging
-      console.log(response.data);
+
+      
+      setFormData((prevFormData) => ({
+        ...prevFormData,             
+        ...response.data.tutor,     
+      }));
+
     } catch (error) {
-      console.error("Error:", error); // Log any errors for debugging
+      console.error("Error:", error); 
     }
   };
-  
 
   useEffect(() => {
-    // Fetch tutor profile when the component loads
     const fetchTutorProfile = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -164,7 +203,7 @@ const Dashboard = () => {
           }
         );
 
-        setFormData(response.data); // Populate the fields
+        setFormData(response.data); 
       } catch (error) {
         console.error(
           "Error fetching tutor profile:",
@@ -176,28 +215,25 @@ const Dashboard = () => {
     fetchTutorProfile();
   }, []);
   return (
-    <div className="flex items-center justify-center mt-5">
-      <div className="w-10/12 p-6 bg-gray-200 mx-auto">
-        {/* Profile Picture */}
+    <div className="flex items-center justify-center">
+      <div className="w-10/12 p-6 mx-auto shadow-xl shadow-slate-400 mt-4">
         {/* Display Profile Picture */}
         <div className="mb-3 flex items-center justify-center">
-  <div className="mt-4">
-    {/* Assuming you have the Cloudinary link stored in the state as formData.profilePicture */}
-    {formData.profilePicture && (
-      <img
-        src={`${BASE_URL_IMAGE}uploads/${formData.profilePicture}`}
-        alt="Profile Picture"
-        className="w-24 h-24 rounded-full object-cover"
-      />
-    )}
-  </div>
-</div>
-
+          <div className="mt-4">
+            {formData.profilePicture && (
+              <img
+                src={`${BASE_URL_IMAGE}uploads/${formData.profilePicture}`}
+                alt="Profile Picture"
+                className="w-24 h-24 rounded-full object-cover"
+              />
+            )}
+          </div>
+        </div>
 
         {/* Phone Number */}
         <form
           onSubmit={handleSubmit}
-          className="w-full grid grid-cols-2 md:grid-cols-3 gap-x-10 "
+          className="w-full grid grid-cols-2 md:grid-cols-3 gap-x-10"
         >
           <div className="mb-3">
             <label
@@ -227,14 +263,19 @@ const Dashboard = () => {
             </label>
             <Select
               id="subjectsTaught"
-              options={subjectOptions}
+              options={filteredSubjectOptions} // Use filtered options here
               isMulti
               onChange={handleSubjectsChange}
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder="Select Subjects"
             />
-            <p>{formData.subjectsTaught.join(", ")}</p>
+            {formData.subjectsTaught.map((subject) => (
+              <div key={subject} className="flex items-center justify-between">
+                <span>{subject}</span>
+                <button onClick={() => removeSubject(subject)}>Remove</button>
+              </div>
+            ))}
           </div>
 
           {/* Grades Handled */}
@@ -247,14 +288,19 @@ const Dashboard = () => {
             </label>
             <Select
               id="gradesHandled"
-              options={gradeOptions}
+              options={filteredGradeOptions} // Use filtered options here
               isMulti
               onChange={handleGradesChange}
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder="Select Grades"
             />
-            <p>{formData.gradesHandled.join(", ")}</p>
+            {formData.gradesHandled.map((grade) => (
+              <div key={grade} className="flex items-center justify-between">
+                <span>{grade}</span>
+                <button onClick={() => removeGrade(grade)}>Remove</button>
+              </div>
+            ))}
           </div>
 
           <div className="mb-3">
@@ -310,15 +356,26 @@ const Dashboard = () => {
             >
               City
             </label>
-            <input
-              type="text"
+            <select
               id="city"
               name="city"
-              value={formData.city}
-              onChange={handleChange}
+              value={formData.city} 
+              onChange={handleChange} 
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
               required
-            />
+            >
+              <option value="">Select City</option>
+              <option value="karachi">Karachi</option>
+              <option value="lahore">Lahore</option>
+              <option value="islamabad">Islamabad</option>
+              <option value="rawalpindi">Rawalpindi</option>
+              <option value="faisalabad">Faisalabad</option>
+              <option value="peshawar">Peshawar</option>
+              <option value="quetta">Quetta</option>
+              <option value="multan">Multan</option>
+              <option value="sialkot">Sialkot</option>
+              <option value="hyderabad">Hyderabad</option>
+            </select>
           </div>
 
           {/* Postcode */}
@@ -386,7 +443,7 @@ const Dashboard = () => {
               <input
                 type="text"
                 name="time"
-                placeholder="e.g., 12:00pm to 4:00pm"
+                placeholder="e.g., 12:00PM 4:00PM"
                 value={newAvailability.time}
                 onChange={handleAvailabilityChange}
                 className="bg-gray-50 border  border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5  w-full"
@@ -401,16 +458,20 @@ const Dashboard = () => {
             </div>
 
             {/* Display Added Availability */}
-            <ul className="list-disc pl-5">
+            <ul className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm space-y-2">
               {formData.availability.map((item, index) => (
-                <li key={index} className="flex justify-between items-center">
-                  <span>
-                    {item.day}: {item.time}
+                <li
+                  key={index}
+                  className="flex justify-between items-center bg-white p-3 rounded-md shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <span className="text-gray-700 font-medium">
+                    {item.day}:{" "}
+                    <span className="font-semibold">{item.time}</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => removeAvailability(index)}
-                    className="text-red-500 text-sm"
+                    className="text-red-600 text-sm font-medium hover:text-red-800 transition-colors"
                   >
                     Remove
                   </button>
@@ -418,16 +479,15 @@ const Dashboard = () => {
               ))}
             </ul>
           </div>
-          <div className="w-full flex mx-auto justify-center">
+          <div className="w-full flex justify-end ">
             <button
               type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:shadow-outline"
+              className=" w-1/2 px-4 py-3 bg-blue-600 text-white text-xl font-bold rounded-lg hover:bg-blue-500 focus:outline-none focus:shadow-outline"
             >
               Update
             </button>
           </div>
         </form>
-         
       </div>
     </div>
   );

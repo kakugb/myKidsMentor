@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux'; 
-import { logout } from '../../../store/authSlice.js';
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/authSlice.js";
+import logo from "../../assests/Logo.svg";
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 function Footer() {
   const { user } = useSelector((state) => state.auth);
@@ -14,18 +15,14 @@ function Footer() {
   const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
   const dispatch = useDispatch();
   const handleLogout = () => {
-      console.log("Logging out...");
-       
-     
-      localStorage.removeItem('token'); 
-      localStorage.removeItem('user')
-      localStorage.setItem('isAuthenticated', 'false');
-     
-      dispatch(logout());
-    
-    };
+    console.log("Logging out...");
 
- 
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.setItem("isAuthenticated", "false");
+
+    dispatch(logout());
+  };
 
   return (
     <div>
@@ -33,39 +30,20 @@ function Footer() {
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center justify-start">
-              <button
-                onClick={toggleSidebar}
-                type="button"
-                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            <div className="flex lg:flex-1">
+              <Link
+                to="/parent/dashboard"
+                className="-m-1.5 p-1.5 flex gap-x-2 text-teal-700"
               >
-                <span className="sr-only">Open sidebar</span>
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <a href="#" className="flex ms-2 md:me-24">
-                <img
-                  src="https://flowbite.com/docs/images/logo.svg"
-                  className="h-8 me-3"
-                  alt="FlowBite Logo"
-                />
-                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                  Flowbite
-                </span>
-              </a>
+                <img alt="" src={logo} className="h-20 w-auto" />
+                <h1 className="hidden sm:flex items-center text-2xl font-bold">
+                  Mykids Mentor
+                </h1>
+              </Link>
             </div>
             <div className="flex items-center">
-              <div className="flex items-center ms-3 relative">
+              <div className="flex items-center gap-x-4 ms-3 relative">
+              <span className="font-semibold uppercase">{user?.name}</span>
                 <button
                   onClick={toggleDropdown}
                   type="button"
@@ -73,25 +51,22 @@ function Footer() {
                   aria-expanded={isDropdownOpen}
                 >
                   <span className="sr-only">Open user menu</span>
-                  <img
-                    className="w-8 h-8 rounded-full"
-                    src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
-                    alt="user"
-                  />
+                  
+              <img
+                alt=""
+                src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
+                className="size-10 rounded-full"
+              />
                 </button>
                 {isDropdownOpen && (
-                  <div className="z-50 absolute right-0 top-9 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600">
+                  <div className="z-50 absolute right-0 top-12 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600">
                     <div className="px-4 py-3">
-                      <p className="text-sm text-gray-900 dark:text-white">
-                        {user?.name}
-                      </p>
+                      
                       <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
                         {user?.email}
                       </p>
                     </div>
                     <ul className="py-1">
-                      
-                      
                       <li>
                         <button
                           onClick={handleLogout}
@@ -111,51 +86,53 @@ function Footer() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-32 transition-transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`}
         aria-label="Sidebar"
       >
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
-
-          <li className="mb-1">
+            <li className="mb-1">
               <Link
-                to='/admin/tutorVerfication'
-                className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
+                to="/admin/tutorVerfication"
+                className="flex items-center p-2 text-black rounded-lg  hover:bg-gray-100"
               >
                 <svg
-                  className="w-5 h-6 text-black transition duration-75 hover:bg-red-800  dark:text-black dark:hover:bg-gray-300"
+                  className="w-6 h-6 text-black transition duration-75 hover:bg-gray-100"
                   fill="currentColor"
-                  viewBox="0 0 22 21"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2a1 1 0 01.894.553l1.618 3.275 3.618.525a1 1 0 01.555 1.705l-2.618 2.553.618 3.606a1 1 0 01-1.45 1.054L12 13.827l-3.239 1.703a1 1 0 01-1.45-1.054l.618-3.606-2.618-2.553a1 1 0 01.555-1.705l3.618-.525L11.106 2.553A1 1 0 0112 2zM12 6.27L10.327 9.636l-3.914.569 2.832 2.764-.668 3.892L12 14.37l3.423 1.791-.668-3.892 2.832-2.764-3.914-.569L12 6.27zM20 22H4a1 1 0 01-1-1v-2a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1zm-1-2H5v1h14v-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
+
                 <span className="ml-3">Tutor Verification</span>
               </Link>
             </li>
 
-
             <li className="mb-1">
               <Link
-                to='/admin/dashboard'
-                className="flex items-center p-2 text-black rounded-lg  hover:bg-red-800 hover:text-white dark:bg-white dark:hover:bg-gray-300 dark:text-black group"
+                to="/admin/dashboard"
+                className="flex items-center p-2 text-black rounded-lg  hover:bg-gray-100 "
               >
                 <svg
-                  className="w-5 h-6 text-black transition duration-75 hover:bg-red-800  dark:text-black dark:hover:bg-gray-300"
+                  className="w-6 h-6 text-black transition duration-75 hover:bg-gray-100"
                   fill="currentColor"
-                  viewBox="0 0 22 21"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.97a1 1 0 0 0-.334-.662 7.005 7.005 0 0 0-6.83-4.277A1 1 0 0 0 12.5 0z" />
+                  <path d="M12 2C6.477 2 2 6.03 2 11c0 2.843 1.389 5.436 3.633 7.165l-.91 3.64a1 1 0 0 0 1.307 1.178l4.09-1.636A9.87 9.87 0 0 0 12 20c5.523 0 10-4.03 10-9s-4.477-9-10-9z" />
+                  <path d="M14.243 10.757a1 1 0 0 0-1.414-1.414L10 12.172l-1.829-1.829a1 1 0 0 0-1.414 1.414L8.586 13.5l-2.121 2.121a1 1 0 0 0 1.414 1.414L10 14.828l2.829 2.829a1 1 0 0 0 1.414-1.414L11.414 13.5l2.829-2.829z" />
                 </svg>
+
                 <span className="ml-3">Review Moderation</span>
               </Link>
             </li>
-          
-            
-            
           </ul>
         </div>
       </aside>

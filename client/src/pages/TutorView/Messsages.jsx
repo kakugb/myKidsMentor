@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'; // Assuming you're using Redux to manage state
 import axios from 'axios'; // Import axios
-
+const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 function Messages() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
@@ -116,7 +116,7 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src={user.profilePicture}
+                     src={`${BASE_URL_IMAGE}uploads/${user.profilePicture}`}
                   alt={user.profilePicture}
                   className="w-12 h-12 rounded-full object-cover"
                 />
@@ -166,7 +166,7 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
                     } max-w-xs`}
                   >
                     <p className="text-sm">{message.content}</p>
-                    <p className="text-xs text-gray-500 text-right">
+                    <p className="text-xs text-black font-semibold text-right">
                       {formatTimestamp(message.timestamp)}
                     </p>
                   </div>

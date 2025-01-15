@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import parentRegister from '../../assests/parentLogin.jpeg'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import parentRegister from "../../assests/parentLogin.jpeg";
 function Register() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phoneNumber: '',
+    name: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
     profilePicture: null, // File type
-    role: 'parent', // Default role
+    role: "parent" // Default role
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      profilePicture: e.target.files[0], // Handle file input
+      profilePicture: e.target.files[0] // Handle file input
     });
   };
 
@@ -37,21 +37,19 @@ function Register() {
     });
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 201) {
-        alert('Registration successful!');
-        // Optional: Redirect to login page
-      } else {
-        alert('Failed to register. Please try again.');
-      }
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      console.log(response);
+      alert(response.data.message);
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again later.');
+      console.error("Error:", error);
     }
   };
 
@@ -69,12 +67,16 @@ function Register() {
 
           <form onSubmit={handleSubmit} className="sm:p-8 p-4 w-full">
             <div className="mb-12">
-              <h3 className="text-black text-4xl font-bold text-center">Parent Registeration</h3>
+              <h3 className="text-teal-700 text-4xl font-bold text-center">
+                Parent Registeration
+              </h3>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">First Name</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  First Name
+                </label>
                 <input
                   name="name"
                   type="text"
@@ -85,7 +87,9 @@ function Register() {
                 />
               </div>
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Email Address</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Email Address
+                </label>
                 <input
                   name="email"
                   type="email"
@@ -96,7 +100,9 @@ function Register() {
                 />
               </div>
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Password</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Password
+                </label>
                 <input
                   name="password"
                   type="password"
@@ -107,7 +113,9 @@ function Register() {
                 />
               </div>
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Phone Number</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Phone Number
+                </label>
                 <input
                   name="phoneNumber"
                   type="text"
@@ -118,7 +126,9 @@ function Register() {
                 />
               </div>
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Profile Picture</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Profile Picture
+                </label>
                 <input
                   name="profilePicture"
                   type="file"
@@ -131,15 +141,15 @@ function Register() {
             <div className="mt-6">
               <button
                 type="submit"
-                className="py-3 px-6 text-sm tracking-wide font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-all"
+                className="py-3 px-6 text-sm tracking-wide font-semibold rounded-md text-white bg-teal-700 hover:bg-teal-600 focus:outline-none transition-all"
               >
                 Sign up
               </button>
-              <p className="flex justify-end text-sm text-blue-600 font-semibold">
+              <p className="flex justify-end text-sm text-teal-700 font-semibold">
                 Already registered?
                 <Link
                   to="/loginParent"
-                  className="ml-1 hover:text-blue-600 hover:underline hover:underline-offset-4"
+                  className="ml-1 hover:text-teal-500 hover:underline hover:underline-offset-4"
                 >
                   Login here
                 </Link>

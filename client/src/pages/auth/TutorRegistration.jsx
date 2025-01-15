@@ -176,34 +176,34 @@ const TutorRegistration = () => {
         }
       });
 
-      // setFormData({
-      //   name: "",
-      //   email: "",
-      //   phoneNumber: "",
-      //   role: "tutor",
-      //   password: "",
-      //   profilePicture: "",
-      //   qualifications: "",
-      //   subjectsTaught: [],
-      //   gradesHandled: [],
-      //   teachingExperience: "",
-      //   hourlyRates: "",
-      //   availability: [],
-      //   certifications: "",
-      //   city: "",
-      //   postcode: ""
-      // });
-      // navigate("/loginTutor");
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        role: "tutor",
+        password: "",
+        profilePicture: "",
+        qualifications: "",
+        subjectsTaught: [],
+        gradesHandled: [],
+        teachingExperience: "",
+        hourlyRates: "",
+        availability: [],
+        certifications: "",
+        city: "",
+        postcode: ""
+      });
+      navigate("/loginTutor");
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   return (
-    <div className="bg-rose-50 min-h-screen flex items-center justify-center">
+    <div className=" min-h-screen flex items-center justify-center py-6">
       <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 w-1/2 mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">
-           Tutor Registration Form
+        <h1 className="text-3xl font-bold text-center mb-8 text-teal-700">
+          Tutor Registration Form
         </h1>
 
         {/* Progress Bar */}
@@ -509,33 +509,33 @@ const TutorRegistration = () => {
                 </ul>
               </div>
               <div className="mb-3">
-  <label
-    htmlFor="city"
-    className="block mb-2 text-sm font-medium text-gray-900"
-  >
-    City
-  </label>
-  <select
-    id="city"
-    name="city"
-    value={formData.city} // Assuming you're using formData for managing state
-    onChange={handleChange} // Handles the form input change
-    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-    required
-  >
-    <option value="">Select City</option>
-    <option value="karachi">Karachi</option>
-    <option value="lahore">Lahore</option>
-    <option value="islamabad">Islamabad</option>
-    <option value="rawalpindi">Rawalpindi</option>
-    <option value="faisalabad">Faisalabad</option>
-    <option value="peshawar">Peshawar</option>
-    <option value="quetta">Quetta</option>
-    <option value="multan">Multan</option>
-    <option value="sialkot">Sialkot</option>
-    <option value="hyderabad">Hyderabad</option>
-  </select>
-</div>
+                <label
+                  htmlFor="city"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  City
+                </label>
+                <select
+                  id="city"
+                  name="city"
+                  value={formData.city} // Assuming you're using formData for managing state
+                  onChange={handleChange} // Handles the form input change
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                  required
+                >
+                  <option value="">Select City</option>
+                  <option value="karachi">Karachi</option>
+                  <option value="lahore">Lahore</option>
+                  <option value="islamabad">Islamabad</option>
+                  <option value="rawalpindi">Rawalpindi</option>
+                  <option value="faisalabad">Faisalabad</option>
+                  <option value="peshawar">Peshawar</option>
+                  <option value="quetta">Quetta</option>
+                  <option value="multan">Multan</option>
+                  <option value="sialkot">Sialkot</option>
+                  <option value="hyderabad">Hyderabad</option>
+                </select>
+              </div>
 
               <div className="mb-3">
                 <label
@@ -607,11 +607,11 @@ const TutorRegistration = () => {
               </button>
             )}
           </div>
-          <p className="text-right pt-6 text-blue-500 font-semibold">
+          <p className="text-right pt-6 text-teal-700 font-semibold">
             Already have account ?
             <Link
               to="/loginTutor"
-              className="ml-1 hover:text-blue-600 hover:underline hover:underline-offset-4"
+              className="ml-1 hover:text-teal-600 hover:underline hover:underline-offset-4"
             >
               Login here
             </Link>

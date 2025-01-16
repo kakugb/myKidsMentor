@@ -30,7 +30,7 @@ import NotFound from "./pages/not-found";
 
 import CheckAuth from "./component/Common/CheckAuth.jsx";
 import UnauthPage from "./pages/unauth-page";
-import OptForm from "./pages/auth/OptForm.jsx";
+
 import { useSelector } from "react-redux";
 
 import { Navigate } from "react-router-dom";

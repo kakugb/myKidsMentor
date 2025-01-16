@@ -53,7 +53,7 @@ export default function Header() {
           </PopoverGroup>
         <div className=" lg:flex lg:flex-1 lg:justify-end gap-x-5">
           
-          <button className="bg-red-800 text-white px-5 rounded-md">
+          <button className="bg-teal-700 text-white px-5 rounded-md">
             <Link
               to="/logins"
               className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold"
@@ -61,7 +61,7 @@ export default function Header() {
               Login
             </Link>
           </button>
-          <button className="bg-red-800 text-white px-5 rounded-md hidden xl:block">
+          <button className="bg-teal-700 text-white px-5 rounded-md hidden xl:block">
             <Link
               to="/Signups"
               className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold  "

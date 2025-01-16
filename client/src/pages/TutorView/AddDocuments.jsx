@@ -159,6 +159,7 @@ const handleDelete = async (certificate) => {
                   <div className="flex items-center justify-center w-32 h-32 bg-gray-100 rounded-lg">
                     <p className="text-sm text-gray-700">View Document</p>
                   </div>
+                  
                 )}
               </div>
             );

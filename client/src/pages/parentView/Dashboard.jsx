@@ -39,6 +39,12 @@ function Dashboard() {
   };
 
   const handleApplyFilters = async () => {
+    if (!filters.day || !filters.time) {
+      setError(true);
+    }  else {
+      setError(false);
+      
+    
     try {
       // Construct the query params based on the selected filters
       const filterParams = {
@@ -89,6 +95,7 @@ function Dashboard() {
         "An error occurred while fetching tutors. Please try again later."
       ); // Display a generic error message
     }
+  }
   };
 
   const fetchReviews = async (tutorId) => {
@@ -140,185 +147,196 @@ console.log(tutorsWithReviews)
   return (
     <div>
       {/* Filter Controls */}
-      <div className="grid grid-cols-2 md:grid-cols-4 items-center gap-4 p-4">
-        {/* Subject Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="subject"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Subject
-          </label>
-          <select
-            id="subject"
-            name="subject"
-            value={filters.subject}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Subjects</option>
-            <option value="math">Math</option>
-            <option value="science">Science</option>
-            <option value="english">English</option>
-            <option value="urdu">Urdu</option>
-            <option value="biology">Biology</option>
-            <option value="history">History</option>
-            <option value="chemistry">Chemistry</option>
-            <option value="physics">Physics</option>
-          </select>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center gap-6 p-6 bg-gray-100 rounded-lg shadow-lg">
+  {/* Subject Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="subject"
+      className="block text-sm font-medium text-gray-700"
+    >
+      Subject
+    </label>
+    <select
+      id="subject"
+      name="subject"
+      value={filters.subject}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="all">All Subjects</option>
+      <option value="math">Math</option>
+      <option value="science">Science</option>
+      <option value="english">English</option>
+      <option value="urdu">Urdu</option>
+      <option value="biology">Biology</option>
+      <option value="history">History</option>
+      <option value="chemistry">Chemistry</option>
+      <option value="physics">Physics</option>
+    </select>
+  </div>
 
-        {/* Level Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="level"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Level
-          </label>
-          <select
-            id="level"
-            name="level"
-            value={filters.level}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Levels</option>
-            <option value="grade1">GRADE-1</option>
-            <option value="grade2">GRADE-2</option>
-            <option value="grade3">GRADE-3</option>
-            <option value="grade4">GRADE-4</option>
-            <option value="grade5">GRADE-5</option>
-            <option value="grade6">GRADE-6</option>
-            <option value="grade7">GRADE-7</option>
-            <option value="grade8">GRADE-8</option>
-            <option value="grade9">GRADE-9</option>
-            <option value="grade10">GRADE-10</option>
-          </select>
-        </div>
+  {/* Level Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="level"
+      className="block text-sm font-medium text-gray-700"
+    >
+      Level
+    </label>
+    <select
+      id="level"
+      name="level"
+      value={filters.level}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="all">All Levels</option>
+      <option value="grade1">GRADE-1</option>
+      <option value="grade2">GRADE-2</option>
+      <option value="grade3">GRADE-3</option>
+      <option value="grade4">GRADE-4</option>
+      <option value="grade5">GRADE-5</option>
+      <option value="grade6">GRADE-6</option>
+      <option value="grade7">GRADE-7</option>
+      <option value="grade8">GRADE-8</option>
+      <option value="grade9">GRADE-9</option>
+      <option value="grade10">GRADE-10</option>
+    </select>
+  </div>
 
-        {/* Price Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Price
-          </label>
-          <select
-            id="price"
-            name="price"
-            value={filters.price}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Prices</option>
-            <option value="20">20$</option>
-            <option value="25">25$</option>
-            <option value="30">30$</option>
-            <option value="35">35$</option>
-            <option value="40">40$</option>
-            <option value="45">45$</option>
-            <option value="50">50$</option>
-            <option value="55">55$</option>
-            <option value="60">60$</option>
-          </select>
-        </div>
+  {/* Price Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="price"
+      className="block text-sm font-medium text-gray-700"
+    >
+      Price
+    </label>
+    <select
+      id="price"
+      name="price"
+      value={filters.price}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="all">All Prices</option>
+      <option value="20">20$</option>
+      <option value="25">25$</option>
+      <option value="30">30$</option>
+      <option value="35">35$</option>
+      <option value="40">40$</option>
+      <option value="45">45$</option>
+      <option value="50">50$</option>
+      <option value="55">55$</option>
+      <option value="60">60$</option>
+    </select>
+  </div>
 
-        {/* City Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="city"
-            className="block text-sm font-medium text-gray-600"
-          >
-            City
-          </label>
-          <select
-            id="city"
-            name="city"
-            value={filters.city}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select City</option>
-            <option value="karachi">Karachi</option>
-            <option value="lahore">Lahore</option>
-            <option value="islamabad">Islamabad</option>
-            <option value="rawalpindi">Rawalpindi</option>
-            <option value="faisalabad">Faisalabad</option>
-            <option value="peshawar">Peshawar</option>
-            <option value="quetta">Quetta</option>
-            <option value="multan">Multan</option>
-            <option value="sialkot">Sialkot</option>
-            <option value="hyderabad">Hyderabad</option>
-          </select>
-        </div>
+  {/* City Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="city"
+      className="block text-sm font-medium text-gray-700"
+    >
+      City
+    </label>
+    <select
+      id="city"
+      name="city"
+      value={filters.city}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="">Select City</option>
+      <option value="karachi">Karachi</option>
+      <option value="lahore">Lahore</option>
+      <option value="islamabad">Islamabad</option>
+      <option value="rawalpindi">Rawalpindi</option>
+      <option value="faisalabad">Faisalabad</option>
+      <option value="peshawar">Peshawar</option>
+      <option value="quetta">Quetta</option>
+      <option value="multan">Multan</option>
+      <option value="sialkot">Sialkot</option>
+      <option value="hyderabad">Hyderabad</option>
+    </select>
+  </div>
 
-        {/* Day Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="day"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Day
-          </label>
-          <select
-            id="day"
-            name="day"
-            value={filters.day}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Day</option>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-          </select>
-        </div>
+  {/* Day Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="day"
+      className="block text-sm font-medium text-gray-700"
+    >
+      Day
+    </label>
+    <select
+      id="day"
+      name="day"
+      value={filters.day}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="">Select Day</option>
+      <option value="Monday">Monday</option>
+      <option value="Tuesday">Tuesday</option>
+      <option value="Wednesday">Wednesday</option>
+      <option value="Thursday">Thursday</option>
+      <option value="Friday">Friday</option>
+      <option value="Saturday">Saturday</option>
+      <option value="Sunday">Sunday</option>
+    </select>
+  </div>
 
-        {/* Time Dropdown */}
-        <div className="w-full">
-          <label
-            htmlFor="time"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Time
-          </label>
-          <select
-            id="time"
-            name="time"
-            value={filters.time}
-            onChange={handleFilterChange}
-            className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Time</option>
-            <option value="9AM">9AM</option>
-            <option value="10AM">10AM</option>
-            <option value="11AM">11AM</option>
-            <option value="12PM">12PM</option>
-            <option value="1PM">1PM</option>
-            <option value="2PM">2PM</option>
-            <option value="3PM">3PM</option>
-            <option value="4PM">4PM</option>
-            <option value="5PM">5PM</option>
-          </select>
-        </div>
+  {/* Time Dropdown */}
+  <div className="w-full">
+    <label
+      htmlFor="time"
+      className="block text-sm font-medium text-gray-700"
+    >
+      Time
+    </label>
+    <select
+      id="time"
+      name="time"
+      value={filters.time}
+      onChange={handleFilterChange}
+      className="w-full p-3 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+    >
+      <option value="">Select Time</option>
+      <option value="9AM">9AM</option>
+      <option value="10AM">10AM</option>
+      <option value="11AM">11AM</option>
+      <option value="12PM">12PM</option>
+      <option value="1PM">1PM</option>
+      <option value="2PM">2PM</option>
+      <option value="3PM">3PM</option>
+      <option value="4PM">4PM</option>
+      <option value="5PM">5PM</option>
+    </select>
+  </div>
 
-        <button
-          onClick={handleApplyFilters}
-          className="mx-auto bg-teal-700 text-white p-2 px-10 font-bold mt-4 rounded-md hover:bg-teal-600"
-        >
-          Apply Filters
-        </button>
-      </div>
+
+  {/* Apply Filters Button */}
+  <div className="col-span-full">
+    <button
+      onClick={handleApplyFilters}
+      className="w-full bg-teal-700 text-white p-3 font-bold rounded-md hover:bg-teal-600 transition duration-200 shadow-md"
+    >
+      Apply Filters
+    </button>
+  </div>
+  {error && (
+    <div className="col-span-full text-red-600 text-sm font-semibold">
+      Please select both Day and Time to filter.
+    </div>
+  )}
+</div>
+
 
       {/* Tutor Cards */}
       <div className="w-full h-screen p-6 "
       >
+        <h1 className="text-center text-4xl font-bold text-teal-700">List of Verfied Tutors</h1>
         <div className="max-w-6xl mx-auto p-6">
           {tutorsWithReviews.length > 0
             ? tutorsWithReviews.map((tutor) => (

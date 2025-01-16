@@ -37,27 +37,27 @@ exports.filterTutors = async (req, res) => {
     }
 
         // Filter by availability with regex
-        // if (availability) {
-        //     let availabilityList;
-        //     try {
-        //         availabilityList = typeof availability === 'string' ? JSON.parse(availability) : availability;
-        //     } catch (error) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'Invalid availability format. It must be a valid JSON string representing an array.',
-        //         });
-        //     }
+        if (availability) {
+            let availabilityList;
+            try {
+                availabilityList = typeof availability === 'string' ? JSON.parse(availability) : availability;
+            } catch (error) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid availability format. It must be a valid JSON string representing an array.',
+                });
+            }
 
-        //     const availabilityRegex = availabilityList
-        //         .map(item => `${item.day}.*${item.time}`) // Create regex for each day/time pair
-        //         .join('|');
+            const availabilityRegex = availabilityList
+                .map(item => `${item.day}.*${item.time}`) // Create regex for each day/time pair
+                .join('|');
 
-        //     conditions.push({
-        //         availability: {
-        //             [Op.regexp]: availabilityRegex, // Regex matching for availability
-        //         },
-        //     });
-        // }
+            conditions.push({
+                availability: {
+                    [Op.regexp]: availabilityRegex, // Regex matching for availability
+                },
+            });
+        }
 
         // Filter by hourlyRates (exact match)
         if (hourlyRates) {
@@ -82,7 +82,7 @@ exports.filterTutors = async (req, res) => {
                 [Op.and]: conditions, // Ensure all conditions must match
             },
         });
-console.log(tutors)
+
         if (tutors.length > 0) {
             return res.status(200).json({
                 success: true,

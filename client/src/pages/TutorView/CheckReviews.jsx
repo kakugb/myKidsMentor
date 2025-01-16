@@ -190,32 +190,48 @@ const CheckReviews = () => {
         </div>
 
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">General Availability</h2>
-          <table className="w-full mt-2 border-collapse border">
-            <thead>
-              <tr>
-                <th className="border p-2">Time</th>
-                {daysOfWeek.map((day) => (
-                  <th key={day} className="border p-2">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tutor?.availability?.map((item) => (
-                <tr key={item.time}>
-                  <td className="border p-2">{item.time}</td>
-                  {daysOfWeek.map((day) => (
-                    <td key={day} className="border p-2">
-                      {isAvailable(day, item.time) ? "✓" : "x"}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  <h2 className="text-2xl font-semibold text-gray-800">General Availability</h2>
+  <div className="overflow-x-auto mt-4">
+    <table className="w-full border-collapse border border-gray-300 shadow-lg rounded-lg">
+      <thead>
+        <tr className="bg-teal-700 text-white">
+          <th className="border border-gray-300 p-3 text-left">Time</th>
+          {daysOfWeek.map((day) => (
+            <th key={day} className="border border-gray-300 p-3 text-center">
+              {day}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {tutor?.availability?.map((item, rowIndex) => (
+          <tr
+            key={item.time}
+            className={`${
+              rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
+            } hover:bg-blue-100`}
+          >
+            <td className="border border-gray-300 p-3 text-gray-700 font-medium">
+              {item.time}
+            </td>
+            {daysOfWeek.map((day) => (
+              <td
+                key={day}
+                className={`border border-gray-300 p-3 text-center ${
+                  isAvailable(day, item.time)
+                    ? "text-green-600 font-semibold"
+                    : "text-red-600 font-semibold"
+                }`}
+              >
+                {isAvailable(day, item.time) ? "✓" : "x"}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
       </div>
     </div>
   );

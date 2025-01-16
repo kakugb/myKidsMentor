@@ -227,7 +227,7 @@ const TutorDetail = () => {
 
         {/* Ratings and Reviews */}
         <div className="mt-5">
-      <h2 className="text-xl font-semibold flex items-center gap-2">
+      <h2 className="text-xl font-bold flex items-center gap-2">
         Ratings & Reviews
         {/* Pen Icon/Button to toggle the review form */}
         <button onClick={handleToggleReviewForm} className="text-gray-600">
@@ -315,16 +315,23 @@ const TutorDetail = () => {
       )}
     </div>
 
-
+<div className="w-1/2 flex justify-between mx-auto">
         {/* Qualifications */}
         <div className="mt-5">
           <h2 className="text-xl font-semibold">Qualifications</h2>
           {tutor.qualifications}
         </div>
 
+        
+        {/* City */}
+        <div className="mt-5">
+          <h2 className="text-xl font-semibold">City</h2>
+          {tutor.city}
+        </div>
+        </div>
         {certificationsArray.length > 0 ? (
           <div className="mt-5">
-            <h2 className="text-xl font-semibold">Certifications</h2>
+            <h2 className="text-2xl font-bold">Certifications</h2>
             <ul className="flex flex-wrap gap-x-6 mt-3">
               {certificationsArray.map((certificate, index) => (
                 <li key={index} className="mb-2">
@@ -337,9 +344,11 @@ const TutorDetail = () => {
                     <img
                       src={`${BASE_URL_IMAGE}uploads/${certificate}`}
                       alt={`Certification ${index + 1}`}
-                      className="w-16 h-16 object-cover border rounded"
+                      className="w-32 h-32 object-cover border rounded"
                     />
+                   
                   </Link>
+                  <p className="w-20 text-sm mt-4">{certificate}</p>
                 </li>
               ))}
             </ul>
@@ -348,39 +357,51 @@ const TutorDetail = () => {
           <p>No certifications available</p>
         )}
 
-        {/* City */}
-        <div className="mt-5">
-          <h2 className="text-xl font-semibold">city</h2>
-          {tutor.city}
-        </div>
 
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">General Availability</h2>
-          <table className="w-full mt-2 border-collapse border">
-            <thead>
-              <tr>
-                <th className="border p-2">Time</th>
-                {daysOfWeek.map((day) => (
-                  <th key={day} className="border p-2">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tutor?.availability?.map((item) => (
-                <tr key={item.time}>
-                  <td className="border p-2">{item.time}</td>
-                  {daysOfWeek.map((day) => (
-                    <td key={day} className="border p-2">
-                      {isAvailable(day, item.time) ? "✓" : "x"}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  <h2 className="text-2xl font-semibold text-gray-800">General Availability</h2>
+  <div className="overflow-x-auto mt-4">
+    <table className="w-full border-collapse border border-gray-300 shadow-lg rounded-lg">
+      <thead>
+        <tr className="bg-teal-700 text-white">
+          <th className="border border-gray-300 p-3 text-left">Time</th>
+          {daysOfWeek.map((day) => (
+            <th key={day} className="border border-gray-300 p-3 text-center">
+              {day}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {tutor?.availability?.map((item, rowIndex) => (
+          <tr
+            key={item.time}
+            className={`${
+              rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
+            } hover:bg-blue-100`}
+          >
+            <td className="border border-gray-300 p-3 text-gray-700 font-medium">
+              {item.time}
+            </td>
+            {daysOfWeek.map((day) => (
+              <td
+                key={day}
+                className={`border border-gray-300 p-3 text-center ${
+                  isAvailable(day, item.time)
+                    ? "text-green-600 font-semibold"
+                    : "text-red-600 font-semibold"
+                }`}
+              >
+                {isAvailable(day, item.time) ? "✓" : "x"}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
       </div>
 
       {/* RIGHT COLUMN: Messages Section */}
@@ -442,7 +463,7 @@ const TutorDetail = () => {
               ></textarea>
               <button
                 onClick={sendMessage}
-                className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+                className="w-full bg-teal-700 text-white py-2 rounded-md hover:bg-teal-700"
               >
                 Send a message
               </button>
@@ -455,7 +476,7 @@ const TutorDetail = () => {
 
         {/* Floating Message Icon */}
         <div
-          className="fixed bottom-5 right-5 bg-blue-600 text-white p-4 rounded-full cursor-pointer shadow-lg z-50"
+          className="fixed bottom-5 right-5 bg-teal-700 text-white p-4 rounded-full cursor-pointer shadow-lg z-50"
           onClick={() => setIsMessageBoxVisible(!isMessageBoxVisible)} // Toggle visibility of the message box
         >
           <svg

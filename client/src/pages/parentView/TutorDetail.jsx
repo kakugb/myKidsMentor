@@ -178,7 +178,7 @@ const TutorDetail = () => {
   return (
     <div className="container mx-auto p-5 lg:flex gap-10 ">
       {/* LEFT COLUMN: Tutor Details */}
-      <div className="w-10/12 p-5 rounded-md shadow-md ">
+      <div className="w-10/12 p-5 rounded-md shadow-md mx-auto">
         {/* Profile Section */}
         <div className="flex gap-5 items-center justify-center">
           <img

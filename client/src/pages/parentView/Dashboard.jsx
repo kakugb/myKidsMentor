@@ -327,7 +327,7 @@ console.log(tutorsWithReviews)
                   key={tutor.id}
                   className="block" // Ensure it behaves like a block to make the whole card clickable
                 >
-                  <div className="flex items-center mb-10 border rounded-lg shadow-xl shadow-slate-400 bg-white overflow-hidden">
+                  <div className="flex items-center mb-10 border rounded-lg shadow-xl shadow-slate-400 bg-white overflow-hidden p-6 transition-transform duration-300 ease-in-out hover:translate-y-[-10px]">
                     {/* Profile Picture */}
                     <div className="w-1/4 h-64">
                       <img

@@ -178,9 +178,9 @@ const TutorDetail = () => {
   return (
     <div className="container mx-auto p-5 lg:flex gap-10 ">
       {/* LEFT COLUMN: Tutor Details */}
-      <div className="lg:w-3/4  p-5 rounded-md shadow-md">
+      <div className="w-10/12 p-5 rounded-md shadow-md ">
         {/* Profile Section */}
-        <div className="flex gap-5 items-center">
+        <div className="flex gap-5 items-center justify-center">
           <img
             src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
             alt="Tutor"
@@ -194,16 +194,17 @@ const TutorDetail = () => {
         </div>
 
         {/* About Section */}
-        <div className="mt-5">
-          <h2 className="text-xl font-semibold">About me</h2>
+        <div className="mt-5 text-center ">
+          <h2 className="text-2xl font-bold">About me</h2>
         </div>
 
-        {/* Subjects Handled Section */}
+<div className="w-1/2 flex justify-between mx-auto">
+          {/* Subjects Handled Section */}
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">Subjects Handled</h2>
-          <ul className="list-disc pl-5">
+          <h2 className="text-2xl font-bold text-teal-700">Subjects Handled</h2>
+          <ul className="list-disc pl-5 pt-2">
             {tutor.subjectsTaught.map((subject, index) => (
-              <li key={index} className="text-gray-700">
+              <li key={index} className="text-black font-bold">
                 {subject}
               </li>
             ))}
@@ -212,15 +213,18 @@ const TutorDetail = () => {
 
         {/* Grade Handled Section */}
         <div className="mt-5">
-          <h2 className="text-xl font-semibold">Grade Handled</h2>
-          <ul className="list-disc pl-5">
+          <h2 className="text-2xl font-bold text-teal-700">Grade Handled</h2>
+          <ul className="list-disc pl-5 pt-2">
             {tutor.gradesHandled.map((Grade, index) => (
-              <li key={index} className="text-gray-700">
+              <li key={index} className="text-black font-bold">
                 {Grade}
               </li>
             ))}
           </ul>
         </div> 
+
+        </div>
+
         {/* Ratings and Reviews */}
         <div className="mt-5">
       <h2 className="text-xl font-semibold flex items-center gap-2">

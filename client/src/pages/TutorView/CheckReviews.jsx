@@ -93,7 +93,7 @@ const CheckReviews = () => {
       {/* LEFT COLUMN: Tutor Details */}
       <div className="lg:w-10/12 bg-white p-5 rounded-md shadow-md mx-auto">
         {/* Profile Section */}
-        <div className="flex gap-5 items-center ">
+        <div className="flex gap-5 items-center justify-center ">
           <img
             src={`${BASE_URL_IMAGE}uploads/${tutor.profilePicture}`}
             alt="Tutor"
@@ -107,34 +107,34 @@ const CheckReviews = () => {
         </div>
 
         {/* About Section */}
-        <div className="mt-5">
+        <div className="mt-5 text-center">
           <h2 className="text-xl font-semibold">About me</h2>
         </div>
+        <div className="w-10/12 block sm:flex justify-between">
+          {/* Subjects Handled Section */}
+          <div className="mt-5">
+            <h2 className="text-xl font-semibold">Subjects Handled</h2>
+            <ul className="list-disc pl-5">
+              {tutor.subjectsTaught.map((subject, index) => (
+                <li key={index} className="text-gray-700">
+                  {subject}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Subjects Handled Section */}
-        <div className="mt-5">
-          <h2 className="text-xl font-semibold">Subjects Handled</h2>
-          <ul className="list-disc pl-5">
-            {tutor.subjectsTaught.map((subject, index) => (
-              <li key={index} className="text-gray-700">
-                {subject}
-              </li>
-            ))}
-          </ul>
+          {/* Grade Handled Section */}
+          <div className="mt-5">
+            <h2 className="text-xl font-semibold">Grade Handled</h2>
+            <ul className="list-disc pl-5">
+              {tutor.gradesHandled.map((Grade, index) => (
+                <li key={index} className="text-gray-700">
+                  {Grade}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-
-        {/* Grade Handled Section */}
-        <div className="mt-5">
-          <h2 className="text-xl font-semibold">Grade Handled</h2>
-          <ul className="list-disc pl-5">
-            {tutor.gradesHandled.map((Grade, index) => (
-              <li key={index} className="text-gray-700">
-                {Grade}
-              </li>
-            ))}
-          </ul>
-        </div>
-
         {/* Ratings and Reviews */}
         <div className="mt-5">
           <h2 className="text-xl font-semibold">Ratings & Reviews</h2>
@@ -149,11 +149,13 @@ const CheckReviews = () => {
 
           <div className="mt-3">
             {reviews.slice(0, visibleReviews).map((review) => (
-              <div key={review.id} className="border-b pb-3 mb-3 hover:bg-gray-100">
+              <div
+                key={review.id}
+                className="border-b pb-3 mb-3 hover:bg-gray-100"
+              >
                 <div className="flex items-center gap-3">
                   <img
-                    
-                   src={`${BASE_URL_IMAGE}uploads/${review.parent.profilePicture}`}
+                    src={`${BASE_URL_IMAGE}uploads/${review.parent.profilePicture}`}
                     alt={review.parent.name}
                     className="w-12 h-12 object-cover rounded-full border"
                   />

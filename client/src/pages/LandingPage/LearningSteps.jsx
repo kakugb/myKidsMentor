@@ -1,10 +1,10 @@
 import React from "react";
 import shareGoal from "../../assests/shareGoal.jpg";
 import findPerfect from "../../assests/findTutor.jpeg";
-import learnBegin from "../../assests/interactiveLearn.jpeg";
-import trustedParent from "../../assests/trustedParent.jpeg";
-import helptoGrow from "../../assests/helpTeam.jpeg";
-import intereativeLearn from "../../assests/interactiveLearn.jpeg";
+import learnBegin from "../../assests/interactiveLearn.png";
+import trustedParent from "../../assests/trustedParent.png";
+import helptoGrow from "../../assests/helpTeam.png";
+import intereativeLearn from "../../assests/interactiveLearn.png";
 function LearningSteps() {
   return (
     <>

@@ -117,7 +117,7 @@ const handleDelete = async (certificate) => {
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="px-4 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-600"
           >
             Upload
           </button>

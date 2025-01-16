@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
+import pencilimg from '../../assests/pencil-5798875.jpg'
 function Dashboard() {
   const [tutorsWithReviews, setTutorsWithReviews] = useState([]);
   const [filters, setFilters] = useState({
@@ -135,7 +136,7 @@ function Dashboard() {
 
     fetchTutors();
   }, []);
-
+console.log(tutorsWithReviews)
   return (
     <div>
       {/* Filter Controls */}
@@ -316,7 +317,8 @@ function Dashboard() {
       </div>
 
       {/* Tutor Cards */}
-      <div className="w-full p-6 ">
+      <div className="w-full h-screen p-6 "
+      >
         <div className="max-w-6xl mx-auto p-6">
           {tutorsWithReviews.length > 0
             ? tutorsWithReviews.map((tutor) => (
@@ -336,13 +338,19 @@ function Dashboard() {
                     </div>
 
                     {/* Profile Details */}
-                    <div className="w-2/4 p-4">
+                    <div className="w-2/4 p-4 ml-2">
                       <h2 className="text-2xl font-bold mb-1">{tutor.name}</h2>
                       <p className="text-xl text-gray-600 font-bold mb-2">
                         {tutor.qualifications}
                       </p>
-                      <p className="text-xl text-gray-700 leading-snug">
-                        Subjects: {tutor.subjectsTaught.join(", ")}
+                      <p className="text-xl text-black font-bold leading-snug">
+                        Subjects Taught : <span className="text-gray-700 font-semibold uppercase">{tutor.subjectsTaught.join(", ")}</span>
+                      </p>
+                      <p className="text-xl text-black font-bold  leading-snug mt-2">
+                        Qualifications : <span className="text-gray-700 font-semibold uppercase">{tutor.city}</span>
+                      </p>
+                      <p className="text-xl text-black font-bold leading-snug mt-2">
+                        Email : <span className="text-gray-700 font-semibold uppercase"> {tutor.email}</span>
                       </p>
                     </div>
 

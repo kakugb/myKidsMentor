@@ -451,7 +451,7 @@ const Dashboard = () => {
               <button
                 type="button"
                 onClick={addAvailability}
-                className="bg-green-500 text-white px-3 py-1 rounded-lg"
+                className="bg-teal-700 text-white px-3 py-1 rounded-lg"
               >
                 Add
               </button>
@@ -482,7 +482,7 @@ const Dashboard = () => {
           <div className="w-full flex justify-end ">
             <button
               type="submit"
-              className=" w-1/2 px-4 py-3 bg-blue-600 text-white text-xl font-bold rounded-lg hover:bg-blue-500 focus:outline-none focus:shadow-outline"
+              className=" w-1/2 px-4 py-3 bg-teal-700 text-white text-xl font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:shadow-outline"
             >
               Update
             </button>

@@ -201,7 +201,7 @@ const TutorRegistration = () => {
 
   return (
     <div className=" min-h-screen flex items-center justify-center py-6">
-      <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 w-1/2 mx-auto">
+      <div className="bg-white rounded-lg shadow-xl shadow-slate-950 p-6 md:p-10 w-full md:w-1/2 mx-auto">
         <h1 className="text-3xl font-bold text-center mb-8 text-teal-700">
           Tutor Registration Form
         </h1>

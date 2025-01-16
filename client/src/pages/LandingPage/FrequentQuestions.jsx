@@ -9,7 +9,7 @@ function FrequentQuestions() {
 
   return (
     <section className="w-full py-6">
-      <div className="w-1/2 px-4 pb-8 mx-auto lg:pb-24 lg:px-6 shadow-md shadow-slate-400 rounded-lg">
+      <div className="w-full md:w-1/2 px-4 pb-8 mx-auto lg:pb-24 lg:px-6 shadow-md shadow-slate-400 rounded-lg">
         <h2 className="mb-6 text-3xl font-extrabold tracking-tight text-center text-teal-700 lg:mb-8 lg:text-3xl pt-6">
           Read our FAQs
         </h2>

@@ -186,7 +186,7 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
 
               <button
                 onClick={sendMessage}
-                className="w-full bg-teal-700 text-white py-2 rounded-md mt-2"
+                className="w-full bg-green-600 text-white py-2 rounded-md mt-2"
               >
                 Send Message
               </button>

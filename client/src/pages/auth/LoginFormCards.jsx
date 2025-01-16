@@ -7,7 +7,7 @@ function LoginFormCards() {
   return (
     <>
     <div class="flex items-center justify-center min-h-screen ">
-  <div class="grid gap-8 md:grid-cols-3">
+  <div class="grid  gap-8 md:grid-cols-3">
     
   <div class="w-10/12  shadow-xl rounded-lg overflow-hidden shadow-slate-400 transition-transform duration-300 ease-in-out hover:translate-y-[-10px]">
       <img

@@ -215,221 +215,231 @@ const Dashboard = () => {
     fetchTutorProfile();
   }, []);
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-10/12 p-6 mx-auto shadow-xl shadow-slate-400 mt-4">
-        {/* Display Profile Picture */}
-        <div className="mb-3 flex items-center justify-center">
-          <div className="mt-4">
-            {formData.profilePicture && (
-              <img
-                src={`${BASE_URL_IMAGE}uploads/${formData.profilePicture}`}
-                alt="Profile Picture"
-                className="w-24 h-24 rounded-full object-cover"
-              />
-            )}
-          </div>
-        </div>
-
+    <div className="flex items-center justify-center p-4">
+    <div className="w-full md:w-10/12 p-6 mx-auto shadow-xl shadow-slate-400 mt-4">
+      {/* Display Profile Picture */}
+      <div className="mb-6 flex items-center justify-center">
+        {formData.profilePicture && (
+          <img
+            src={`${BASE_URL_IMAGE}uploads/${formData.profilePicture}`}
+            alt="Profile Picture"
+            className="w-24 h-24 rounded-full object-cover"
+          />
+        )}
+      </div>
+  
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+      >
         {/* Phone Number */}
-        <form
-          onSubmit={handleSubmit}
-          className="w-full grid grid-cols-2 md:grid-cols-3 gap-x-10"
-        >
-          <div className="mb-3">
-            <label
-              htmlFor="phone"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Phone Number
-            </label>
-            <input
-              type="text"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            />
-          </div>
-
-          {/* Subjects Taught */}
-          <div className="mb-3">
-            <label
-              htmlFor="subjectsTaught"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Subjects Taught
-            </label>
-            <Select
-              id="subjectsTaught"
-              options={filteredSubjectOptions} // Use filtered options here
-              isMulti
-              onChange={handleSubjectsChange}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select Subjects"
-            />
-            {formData.subjectsTaught.map((subject) => (
-              <div key={subject} className="flex items-center justify-between">
-                <span>{subject}</span>
-                <button onClick={() => removeSubject(subject)}>Remove</button>
-              </div>
-            ))}
-          </div>
-
-          {/* Grades Handled */}
-          <div className="mb-3">
-            <label
-              htmlFor="gradesHandled"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Grades Handled
-            </label>
-            <Select
-              id="gradesHandled"
-              options={filteredGradeOptions} // Use filtered options here
-              isMulti
-              onChange={handleGradesChange}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select Grades"
-            />
-            {formData.gradesHandled.map((grade) => (
-              <div key={grade} className="flex items-center justify-between">
-                <span>{grade}</span>
-                <button onClick={() => removeGrade(grade)}>Remove</button>
-              </div>
-            ))}
-          </div>
-
-          <div className="mb-3">
-            <label
-              htmlFor="certifications"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Qualifications
-            </label>
-            <input
-              type="text"
-              id="qualification"
-              name="qualifications"
-              value={formData.qualifications}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            />
-          </div>
-
-          {/* Hourly Rate */}
-          <div className="mb-3">
-            <label
-              htmlFor="hourlyRates"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Hourly Rate
-            </label>
-            <select
-              id="hourlyRates"
-              name="hourlyRates"
-              value={formData.hourlyRates}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            >
-              <option value="" disabled>
-                Select hourly rate
-              </option>
-              <option value="20">20$</option>
-              <option value="25">25$</option>
-              <option value="30">30$</option>
-              <option value="40">40$</option>
-              <option value="50">50$</option>
-              <option value="60">60$</option>
-            </select>
-          </div>
-          {/* City */}
-          <div className="mb-3">
-            <label
-              htmlFor="city"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              City
-            </label>
-            <select
-              id="city"
-              name="city"
-              value={formData.city} 
-              onChange={handleChange} 
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            >
-              <option value="">Select City</option>
-              <option value="karachi">Karachi</option>
-              <option value="lahore">Lahore</option>
-              <option value="islamabad">Islamabad</option>
-              <option value="rawalpindi">Rawalpindi</option>
-              <option value="faisalabad">Faisalabad</option>
-              <option value="peshawar">Peshawar</option>
-              <option value="quetta">Quetta</option>
-              <option value="multan">Multan</option>
-              <option value="sialkot">Sialkot</option>
-              <option value="hyderabad">Hyderabad</option>
-            </select>
-          </div>
-
-          {/* Postcode */}
-          <div className="mb-3">
-            <label
-              htmlFor="postcode"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
-              Postcode
-            </label>
-            <input
-              type="text"
-              id="postcode"
-              name="postcode"
-              value={formData.postcode}
-              onChange={handleChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-              required
-            />
-          </div>
-
-          {/* Profile Picture */}
-          <div className="mb-3">
-            <label
-              htmlFor="fileUpload"
-              className="block mb-1 text-sm font-medium text-gray-900"
-            >
-              Upload for update Profile Picture
-            </label>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              onChange={handleChange}
-              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              aria-describedby="file_help"
-            />
-            <p id="file_help" className="mt-1 text-sm text-gray-500">
-              Please upload a file for update profile image(e.g., image,
-              document).
-            </p>
-          </div>
-
-          {/* Availability */}
-          <div className="mb-3">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Availability
-            </label>
-            <div className="flex gap-2 mb-2">
+        <div>
+          <label
+            htmlFor="phone"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Phone Number
+          </label>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+            required
+          />
+        </div>
+  
+        {/* Subjects Taught */}
+        <div>
+          <label
+            htmlFor="subjectsTaught"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Subjects Taught
+          </label>
+          <Select
+            id="subjectsTaught"
+            options={filteredSubjectOptions}
+            isMulti
+            onChange={handleSubjectsChange}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="Select Subjects"
+          />
+          {formData.subjectsTaught.map((subject) => (
+            <div key={subject} className="flex items-center justify-between">
+              <span>{subject}</span>
+              <button
+                onClick={() => removeSubject(subject)}
+                className="text-red-600 text-sm hover:underline"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+  
+        {/* Grades Handled */}
+        <div>
+          <label
+            htmlFor="gradesHandled"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Grades Handled
+          </label>
+          <Select
+            id="gradesHandled"
+            options={filteredGradeOptions}
+            isMulti
+            onChange={handleGradesChange}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="Select Grades"
+          />
+          {formData.gradesHandled.map((grade) => (
+            <div key={grade} className="flex items-center justify-between">
+              <span>{grade}</span>
+              <button
+                onClick={() => removeGrade(grade)}
+                className="text-red-600 text-sm hover:underline"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+  
+        {/* Other Input Fields */}
+        <div>
+          <label
+            htmlFor="qualifications"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Qualifications
+          </label>
+          <input
+            type="text"
+            id="qualification"
+            name="qualifications"
+            value={formData.qualifications}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+            required
+          />
+        </div>
+  
+        {/* Hourly Rate */}
+        <div>
+          <label
+            htmlFor="hourlyRates"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Hourly Rate
+          </label>
+          <select
+            id="hourlyRates"
+            name="hourlyRates"
+            value={formData.hourlyRates}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+            required
+          >
+            <option value="" disabled>
+              Select hourly rate
+            </option>
+            <option value="20">20$</option>
+            <option value="25">25$</option>
+            <option value="30">30$</option>
+            <option value="40">40$</option>
+            <option value="50">50$</option>
+            <option value="60">60$</option>
+          </select>
+        </div>
+  
+        {/* City */}
+        <div>
+          <label
+            htmlFor="city"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            City
+          </label>
+          <select
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+            required
+          >
+            <option value="">Select City</option>
+            <option value="karachi">Karachi</option>
+            <option value="lahore">Lahore</option>
+            <option value="islamabad">Islamabad</option>
+            <option value="rawalpindi">Rawalpindi</option>
+            <option value="faisalabad">Faisalabad</option>
+            <option value="peshawar">Peshawar</option>
+            <option value="quetta">Quetta</option>
+            <option value="multan">Multan</option>
+            <option value="sialkot">Sialkot</option>
+            <option value="hyderabad">Hyderabad</option>
+          </select>
+        </div>
+  
+        {/* Postcode */}
+        <div>
+          <label
+            htmlFor="postcode"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Postcode
+          </label>
+          <input
+            type="text"
+            id="postcode"
+            name="postcode"
+            value={formData.postcode}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+            required
+          />
+        </div>
+  
+        {/* Profile Picture */}
+        <div>
+          <label
+            htmlFor="profilePicture"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Upload Profile Picture
+          </label>
+          <input
+            type="file"
+            id="profilePicture"
+            name="profilePicture"
+            onChange={handleChange}
+            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Upload an image or document for your profile picture.
+          </p>
+        </div>
+  
+        {/* Availability */}
+        <div className="col-span-2">
+          <label className="block mb-2 text-sm font-medium text-gray-900">
+            Availability
+          </label>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
               <select
                 name="day"
                 value={newAvailability.day}
                 onChange={handleAvailabilityChange}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5"
+                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-1/2 p-2.5"
               >
                 <option value="">Select Day</option>
                 <option value="Monday">Monday</option>
@@ -443,10 +453,10 @@ const Dashboard = () => {
               <input
                 type="text"
                 name="time"
-                placeholder="e.g., 12:00PM 4:00PM"
+                placeholder="e.g., 12:00 PM - 4:00 PM"
                 value={newAvailability.time}
                 onChange={handleAvailabilityChange}
-                className="bg-gray-50 border  border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5  w-full"
+                className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
               />
               <button
                 type="button"
@@ -456,7 +466,6 @@ const Dashboard = () => {
                 Add
               </button>
             </div>
-
             {/* Display Added Availability */}
             <ul className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm space-y-2">
               {formData.availability.map((item, index) => (
@@ -471,7 +480,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => removeAvailability(index)}
-                    className="text-red-600 text-sm font-medium hover:text-red-800 transition-colors"
+                    className="text-red-600 text-sm font-medium hover:text-red-800"
                   >
                     Remove
                   </button>
@@ -479,17 +488,21 @@ const Dashboard = () => {
               ))}
             </ul>
           </div>
-          <div className="w-full flex justify-end ">
-            <button
-              type="submit"
-              className=" w-1/2 px-4 py-3 bg-teal-700 text-white text-xl font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:shadow-outline"
-            >
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+  
+        {/* Submit Button */}
+        <div className="col-span-full flex justify-end">
+          <button
+            type="submit"
+            className="w-full md:w-1/2 px-4 py-3 bg-teal-700 text-white text-xl font-bold rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Update
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+  
   );
 };
 

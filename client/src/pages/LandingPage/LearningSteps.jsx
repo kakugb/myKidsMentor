@@ -8,7 +8,7 @@ import intereativeLearn from "../../assests/interactiveLearn.png";
 function LearningSteps() {
   return (
     <>
-      <div class="w-full px-5 py-24 ">
+      <div class="w-full px-5 py-24 bg-gradient-to-r from-gray-50 to-gray-100">
         <div class="text-center mb-10">
           <h1 class="sm:text-5xl text-5xl font-bold title-font text-teal-700 mb-2">
             Start learning in 3 steps
@@ -68,7 +68,7 @@ function LearningSteps() {
         </div>
       </div>
 
-      <section class="text-gray-600 body-font">
+      <section class="text-gray-600 body-font bg-gradient-to-r from-gray-50 to-gray-100">
         <div class="w-10/12 mx-auto flex px-5 py-5 md:flex-row flex-col items-center">
           <div class="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left items-center text-center order-2 md:order-none">
             <h1 class="title-font sm:text-5xl text-4xl mb-4 font-bold text-teal-700">

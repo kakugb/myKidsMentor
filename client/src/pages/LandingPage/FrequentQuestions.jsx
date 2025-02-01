@@ -8,12 +8,12 @@ function FrequentQuestions() {
   };
 
   return (
-    <section className="w-full py-6">
-      <div className="w-full md:w-1/2 px-4 pb-8 mx-auto lg:pb-24 lg:px-6 shadow-md shadow-slate-400 rounded-lg">
+    <section className="w-full pt-6 bg-gradient-to-r from-gray-50 to-gray-100">
+      <div className="w-full md:w-10/12  px-4 pb-8 mx-auto lg:pb-24 lg:px-6">
         <h2 className="mb-6 text-3xl font-extrabold tracking-tight text-center text-teal-700 lg:mb-8 lg:text-3xl pt-6">
           Read our FAQs
         </h2>
-        <div className="max-w-screen-md mx-auto">
+        <div className="w-full mx-auto">
           <div id="accordion-flush">
             {[
               {
@@ -48,7 +48,7 @@ function FrequentQuestions() {
             ].map((item, index) => (
               <div key={index} className="mb-4">
                 <div
-                  className={`w-full p-5  shadow-md shadow-slate-400 rounded-lg  ${
+                  className={`w-full bg-white shadow-md shadow-slate-600 rounded-lg transition-transform duration-300 hover:-translate-y-1 ${
                     activeIndex === index ? "border border-teal-500" : ""
                   }`}
                 >
@@ -56,15 +56,15 @@ function FrequentQuestions() {
                     <button
                       type="button"
                       onClick={() => toggleAccordion(index)}
-                      className={`flex items-center justify-between w-full text-left font-medium ${
+                      className={`flex items-center justify-between w-full py-5 px-2 text-left text-xl font-semibold  ${
                         activeIndex === index
-                          ? "text-gray-900 bg-gray-100 py-2 dark:bg-gray-800 dark:text-white"
+                          ? "text-white bg-teal-700 py-2 "
                           : "text-gray-500 dark:text-gray-400"
                       }`}
                     >
                       <span>{item.question}</span>
                       <svg
-                        className={`w-6 h-6 transform transition-transform duration-300 ${
+                        className={`w-6 h-6  text-black font-extrabold transform transition-transform duration-300 ${
                           activeIndex === index ? "rotate-180" : ""
                         }`}
                         fill="currentColor"
@@ -87,7 +87,7 @@ function FrequentQuestions() {
                     } overflow-hidden`}
                   >
                     <div className="py-4">
-                      <p className="text-gray-500 dark:text-gray-400">
+                      <p className="text-black py-5 px-2 font-semibold dark:text-gray-400">
                         {item.answer}
                       </p>
                     </div>

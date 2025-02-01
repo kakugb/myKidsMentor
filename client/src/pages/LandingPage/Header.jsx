@@ -9,10 +9,10 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="">
+    <div className="border border-b-2 shadow-md shadow-slate-500 sticky top-0 z-50 bg-gradient-to-r from-gray-50 to-gray-100">
       <nav
         aria-label="Global"
-        className="w-full flex items-center justify-between p-6 lg:px-8"
+        className="w-full flex items-center justify-between p-2 lg:px-8"
       >
         <div className="flex lg:flex-1">
           <Link

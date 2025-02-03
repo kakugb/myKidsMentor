@@ -1,97 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux'; // Assuming you're using Redux to manage state
-import axios from 'axios'; // Import axios
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
+import './scroll.css'
 function Messages() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
-  const [error, setError] = useState(null); // Store messages for the selected user
-  const { user } = useSelector((state) => state.auth); // Access user from Redux
+  const [error, setError] = useState(null);
+  const { user } = useSelector((state) => state.auth);
   const senderId = user?.id;
-  
-  const senderPhoneNumber = user?.phoneNumber;
-  const [receiverDetails, setReceiverDetails] = useState(null); // State to store the receiver's static details
-const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
-  useEffect(() => {
-    // Fetch users from the server
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/messages/history?userId=${senderId}`);
+  const [ReceiverNumber, setTutorPhoneNumber] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-        setUsers(response.data?.conversations);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
+  // Detect if the screen is mobile size
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
     };
-    fetchUsers();
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Fetch conversation history on mount
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/messages/history?userId=${senderId}`
+        );
+        setUsers(response.data?.conversations);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    if (senderId) fetchUsers();
+  }, [senderId]);
+
+  // Fetch messages when selectedUser changes
   useEffect(() => {
     if (selectedUser) {
-    
-    
-      
-      // Fetch the messages for the selected conversation
-      fetchMessages(selectedUser?.id);
-      setTutorPhoneNumber(selectedUser?.id);
-      // // Fetch receiver details (static details)
-      // fetchReceiverDetails(selectedUser.userB);
+      fetchMessages(selectedUser.id);
+      setTutorPhoneNumber(selectedUser.id);
     }
   }, [selectedUser]);
 
-  const fetchReceiverDetails = async (receiverId) => {
-    try {
-      
-      // Assuming receiver's details are available by receiverId
-      const response = await axios.get(`http://localhost:5000/api/users/${ReceiverNumber}`);
-      
-      setReceiverDetails(response.data);
-    } catch (error) {
-      console.error('Error fetching receiver details:', error);
-    }
-  };
-
   const fetchMessages = async (id) => {
     try {
-      
       const response = await axios.get(
-`http://localhost:5000/api/messages/userMessage?senderId=${user?.id}&receiverId=${id}`
+        `http://localhost:5000/api/messages/userMessage?senderId=${senderId}&receiverId=${id}`
       );
-     
       setMessages(response.data.messages);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error("Error fetching messages:", error);
     }
   };
 
   const sendMessage = async () => {
-    
     if (!messageText.trim()) return;
-    if (user?.id === ReceiverNumber) {
+    if (senderId === ReceiverNumber) {
       alert("You cannot send a message to yourself.");
       return;
     }
 
-   
-
     const newMessage = {
       senderId,
       receiverId: ReceiverNumber,
-      content: messageText, 
+      content: messageText,
       timestamp: new Date(),
     };
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      newMessage,
-    ]);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageText("");
-
     try {
       await axios.post("http://localhost:5000/api/messages/send", newMessage);
-      fetchMessages(selectedUser.userB);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -99,103 +84,166 @@ const [ReceiverNumber,setTutorPhoneNumber]=useState(null)
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
   };
 
-  return (
-    <div className="flex h-screen overflow-hidden" style={{ maxHeight: 'calc(100vh - 120px)' }}>
-      {/* Left: User List */}
-      <div className="w-1/3 bg-gray-100 p-4 overflow-y-auto">
-        <h2 className="font-semibold text-xl mb-4">Messages</h2>
-        <div className="space-y-4">
-          {users.map((user) => (
-            <div
-              key={user.receiverId}
-              onClick={() => setSelectedUser(user)}
-              className="flex items-center justify-between p-4 hover:bg-gray-100 cursor-pointer rounded-md"
-            >
-              <div className="flex items-center space-x-4">
-                <img
-                     src={`${BASE_URL_IMAGE}uploads/${user.profilePicture}`}
-                  alt={user.profilePicture}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <p className="font-semibold text-lg">{user.name}</p>
-                  <p className="text-sm text-gray-500">{user.lastMessage}</p>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">
-                {formatTimestamp(user.timestamp)}
+  // Render conversation list (contacts)
+  const renderConversationList = () => (
+    <div className="w-full h-full bg-gray-100 overflow-y-auto custom-scrollbar">
+      <div className="p-4 bg-green-600 text-white">
+        <h2 className="text-xl font-bold">Chats</h2>
+      </div>
+      <div className="p-4 space-y-3">
+        {users.map((conv) => (
+          <div
+            key={conv.receiverId}
+            onClick={() => setSelectedUser(conv)}
+            className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition hover:bg-green-100 ${
+              selectedUser && selectedUser.receiverId === conv.receiverId
+                ? "bg-green-100"
+                : ""
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <img
+                src={`${BASE_URL_IMAGE}uploads/${conv.profilePicture}`}
+                alt={conv.profilePicture}
+                className="w-12 h-12 rounded-full object-cover shadow-md"
+              />
+              <div>
+                <p className="font-semibold text-base text-gray-800">
+                  {conv.name}
+                </p>
+                <p className="text-sm text-gray-500 truncate w-40">
+                  {conv.lastMessage}
+                </p>
               </div>
             </div>
-          ))}
+            <div className="text-xs text-gray-500">
+              {formatTimestamp(conv.timestamp)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Render chat area (conversation)
+  const renderChatArea = () => (
+    <div className="w-full h-full flex flex-col bg-white">
+      <div className="p-[10px] border-b bg-green-600 text-white flex items-center">
+        {isMobile && (
+          <button
+            onClick={() => setSelectedUser(null)}
+            className="mr-4 text-white"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+        )}
+        <img
+          src={`${BASE_URL_IMAGE}uploads/${selectedUser.profilePicture}`}
+          alt={selectedUser.profilePicture}
+          className="w-10 h-10 rounded-full mr-4"
+        />
+        <h2 className="text-2xl font-semibold">{selectedUser.name}</h2>
+      </div>
+      <div className="flex-1 p-4 bg-gray-50 overflow-y-auto space-y-4 custom-scrollbar">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`flex ${
+              message.senderId === senderId ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`p-3 rounded-lg max-w-xs shadow-sm ${
+                message.senderId === senderId
+                  ? "bg-green-500 text-white rounded-bl-none"
+                  : "bg-white text-gray-800 border border-gray-200 rounded-br-none"
+              }`}
+            >
+              <p className="text-sm">{message.content}</p>
+              <p className="text-xs font-semibold text-right mt-1">
+                {formatTimestamp(message.timestamp)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="p-4 border-t border-gray-300">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            placeholder="Type a message..."
+            className="flex-1 border rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+          />
+          <button
+            onClick={sendMessage}
+            className="bg-green-600 hover:bg-green-700 transition-colors rounded-full px-4 py-3 text-white font-semibold"
+          >
+            Send
+          </button>
         </div>
       </div>
+    </div>
+  );
 
-      {/* Right: Chat Area */}
-      <div className="w-2/3 bg-white flex flex-col">
-        {selectedUser ? (
-          <>
-            {/* Header */}
-            <div className="p-4 border-b">
-              <h2 className="text-xl font-semibold">{receiverDetails?.name}</h2>
-            </div>
-
-            {/* Messages Container */}
-            <div
-              className="flex-1 p-4 space-y-4 overflow-y-auto"
-              style={{
-                maxHeight: 'calc(60vh - 70px)',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-              }}
-            >
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${
-                    message.senderId === senderId ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  <div
-                    className={`p-3 rounded-lg ${
-                      message.senderId === senderId
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-900'
-                    } max-w-xs`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-                    <p className="text-xs text-black font-semibold text-right">
-                      {formatTimestamp(message.timestamp)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Message Input */}
-            <div className="p-4 border-t">
-              <textarea
-                className="w-full p-3 border rounded-md"
-                rows="3"
-                placeholder="Type a message"
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-              ></textarea>
-
-              <button
-                onClick={sendMessage}
-                className="w-full bg-green-600 text-white py-2 rounded-md mt-2"
-              >
-                Send Message
-              </button>
-            </div>
-          </>
+  // Main render:
+  // - On mobile: If no conversation is selected, show the conversation list.
+  //   Otherwise, show the chat area with a back arrow.
+  // - On desktop: Render both side by side.
+  return (
+    // Replace h-screen with a calculated height to account for your header (assumed 64px here)
+    <div className="h-[calc(100vh-104px)]">
+      {isMobile ? (
+        selectedUser ? (
+          renderChatArea()
         ) : (
-          <p className="text-center text-gray-500 p-4">Select a user to start chatting.</p>
-        )}
-      </div>
+          renderConversationList()
+        )
+      ) : (
+        <div className="flex h-full">
+          <div className="w-1/3 border-r border-gray-300">
+            {renderConversationList()}
+          </div>
+          <div className="w-2/3">
+            {selectedUser ? (
+              renderChatArea()
+            ) : (
+              <div className="flex items-center justify-center h-full bg-white">
+                <p className="text-center text-gray-500 p-4">
+                  Select a user to start chatting.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

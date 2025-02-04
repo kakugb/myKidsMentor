@@ -169,12 +169,12 @@ const TutorRegistration = () => {
     }
 
     try {
-      const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`;
-      const response = await axios.post(apiUrl, formDataToSend, {
+     
+      const response = await axios.post("http://localhost:5000/api/auth/register", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
-      });
+      }); 
 
       setFormData({
         name: "",

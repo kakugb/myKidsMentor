@@ -54,7 +54,7 @@ function Footer() {
 
               <span className="hidden sm:block font-semibold uppercase">
                 {user?.name}
-              </span>
+              </span> 
 
               <button
                 onClick={toggleDropdown}
@@ -100,6 +100,15 @@ function Footer() {
       >
         <div className="h-full px-3 pb-4 overflow-y-auto">
           <ul className="space-y-2 font-medium">
+          <li>
+              <Link
+                to="/admin/dashboard"
+                className="flex items-center p-2 text-gray-900 hover:bg-teal-100 dark:text-white dark:hover:bg-teal-600 rounded-md transition-colors"
+              >
+                <FaTachometerAlt className="w-5 h-5" />
+                <span className="ml-3">Dashboard</span>
+              </Link>
+            </li>
             <li>
               <Link
                 to="/admin/tutorVerfication"
@@ -109,15 +118,7 @@ function Footer() {
                 <span className="ml-3">Tutor Verification</span>
               </Link>
             </li>
-            <li>
-              <Link
-                to="/admin/dashboard"
-                className="flex items-center p-2 text-gray-900 hover:bg-teal-100 dark:text-white dark:hover:bg-teal-600 rounded-md transition-colors"
-              >
-                <FaTachometerAlt className="w-5 h-5" />
-                <span className="ml-3">Dashboard</span>
-              </Link>
-            </li>
+           
             {/* Add more sidebar items here with appropriate icons */}
           </ul>
         </div>

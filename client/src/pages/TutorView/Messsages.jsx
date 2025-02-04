@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 import './scroll.css'
+
 function Messages() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
@@ -14,6 +15,9 @@ function Messages() {
   const senderId = user?.id;
   const [ReceiverNumber, setTutorPhoneNumber] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // **1. Create a reference for the end of the messages list**
+  const messagesEndRef = useRef(null);
 
   // Detect if the screen is mobile size
   useEffect(() => {
@@ -24,6 +28,13 @@ function Messages() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // **2. Scroll to the latest message whenever `messages` change**
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Fetch conversation history on mount
   useEffect(() => {
@@ -73,12 +84,58 @@ function Messages() {
       timestamp: new Date(),
     };
 
+    // Optimistically update messages
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageText("");
+
     try {
       await axios.post("http://localhost:5000/api/messages/send", newMessage);
+
+      // Update the users state to reflect the new last message and timestamp
+      setUsers((prevUsers) => {
+        // Determine the unique identifier for the conversation (other user's ID)
+        const otherUserId =
+          selectedUser.id === senderId ? selectedUser.receiverId : selectedUser.senderId;
+
+        // Check if the conversation already exists
+        const existingConversationIndex = prevUsers.findIndex(
+          (conv) => conv.receiverId === otherUserId
+        );
+
+        if (existingConversationIndex !== -1) {
+          // Update the existing conversation
+          const updatedConversation = {
+            ...prevUsers[existingConversationIndex],
+            lastMessage: newMessage.content,
+            timestamp: newMessage.timestamp,
+          };
+
+          // Remove the old conversation
+          const updatedUsers = [...prevUsers];
+          updatedUsers.splice(existingConversationIndex, 1);
+
+          // Add the updated conversation to the top of the list
+          return [updatedConversation, ...updatedUsers];
+        } else {
+          // If conversation doesn't exist, add it
+          return [
+            {
+              receiverId: ReceiverNumber,
+              name: selectedUser.name,
+              profilePicture: selectedUser.profilePicture,
+              lastMessage: newMessage.content,
+              timestamp: newMessage.timestamp,
+            },
+            ...prevUsers,
+          ];
+        }
+      });
     } catch (err) {
       setError(err.response?.data?.message || err.message);
+      // Optionally, revert optimistic update if the request fails
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg !== newMessage)
+      );
     }
   };
 
@@ -100,7 +157,7 @@ function Messages() {
       <div className="p-4 space-y-3">
         {users.map((conv) => (
           <div
-            key={conv.receiverId}
+            key={conv.receiverId} // Ensure receiverId is unique per conversation
             onClick={() => setSelectedUser(conv)}
             className={`flex items-center justify-between p-3 rounded-md cursor-pointer transition hover:bg-green-100 ${
               selectedUser && selectedUser.receiverId === conv.receiverId
@@ -186,6 +243,8 @@ function Messages() {
             </div>
           </div>
         ))}
+        {/* **3. Add a dummy div to anchor the scroll** */}
+        <div ref={messagesEndRef} />
       </div>
       <div className="p-4 border-t border-gray-300">
         <div className="flex items-center gap-2">

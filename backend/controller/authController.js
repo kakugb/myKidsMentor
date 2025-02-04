@@ -23,13 +23,27 @@ exports.registerUser = async (req, res) => {
     postcode
   } = req.body;
 
+  console.log(name,
+    email,
+    password,
+    role,
+    phoneNumber,
+    gender,
+    subjectsTaught,
+    gradesHandled,
+    teachingExperience,
+    hourlyRates,
+    availability,
+    qualifications,
+    city,
+    postcode)
   let finalSubjectsTaught = req.body.subjectsTaught ? req.body.subjectsTaught : [];
   let finalGradesHandled = req.body.gradesHandled ? req.body.gradesHandled : [];
 
    // Check if required fields are missing
    const missingFields = [];
 
-   const requiredFields = ['name', 'email', 'password', 'phoneNumber', 'profilePicture'];
+   const requiredFields = ['name', 'email', 'password', 'phoneNumber'];
    
    // Check each required field for presence
    requiredFields.forEach(field => {

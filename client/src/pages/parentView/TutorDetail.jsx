@@ -179,9 +179,9 @@ const TutorDetail = () => {
   }
 
   return (
-    <div className="container mx-auto p-5 lg:flex gap-10 animate-fadeIn">
+    <div className="container mx-auto p-5 lg:flex gap-10 animate-fadeIn ">
       {/* LEFT COLUMN: Tutor Details */}
-      <div className="w-full xl:w-2/3 p-5 rounded-md shadow-lg mx-auto bg-gradient-to-br from-white to-blue-50 transition-all duration-300">
+      <div className="w-full xl:w-2/3 p-5 rounded-md shadow-lg mx-auto bg-gradient-to-r from-teal-100 to-teal-100 transition-all duration-300">
         {/* Tutor Profile Section */}
         <div className="flex gap-5 items-center justify-center">
           <img

@@ -95,7 +95,6 @@ const CheckReviews = () => {
         {/* About Section */}
         <div className="bg-white p-6 rounded-lg shadow-lg text-center">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">About Me</h2>
-          <p className="text-gray-700">{tutor.about || "No description provided."}</p>
         </div>
 
         {/* Subjects & Grades */}

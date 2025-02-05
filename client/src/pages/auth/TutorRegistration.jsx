@@ -195,6 +195,7 @@ const TutorRegistration = () => {
       });
       navigate("/loginTutor");
     } catch (error) {
+       alert(error)
       console.error("Error:", error);
     }
   };

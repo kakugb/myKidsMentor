@@ -107,6 +107,17 @@ function LoginAdmin() {
           </button>
         </form>
       </div>
+       <p className="flex justify-end text-sm text-teal-700 font-semibold">
+                      Go to landing page?
+                      <Link
+                        to="/landing"
+                        className="ml-1 hover:text-teal-500 hover:underline hover:underline-offset-4"
+                      >
+                        Click here
+                      </Link>
+                    </p>
+
+      
     </div>
   );
 }

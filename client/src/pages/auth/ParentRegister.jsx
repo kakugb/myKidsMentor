@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import parentRegister from "../../assests/parentLogin.jpeg";
+
 function Register() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     phoneNumber: "",
-    profilePicture: null, // File type
-    role: "parent" // Default role
+    profilePicture: null,
+    role: "parent"
   });
 
   const handleInputChange = (e) => {
@@ -23,14 +26,13 @@ function Register() {
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      profilePicture: e.target.files[0] // Handle file input
+      profilePicture: e.target.files[0]
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a FormData object to handle file upload
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
@@ -46,15 +48,21 @@ function Register() {
           }
         }
       );
-      console.log(response);
-      alert(response.data.message);
+      toast.success(response.data.message || "Registration successful!");
     } catch (error) {
-      console.error("Error:", error);
+      if (error.response) {
+        // Server responded with an error status
+        toast.error(error.response.data.message || "An error occurred.");
+      } else {
+        // Network or other error
+        toast.error("Network error. Please try again.");
+      }
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <div className="flex flex-col justify-center items-center font-[sans-serif] bg-rose-50 lg:h-screen p-6">
         <div className="grid md:grid-cols-2 items-center gap-y-8 bg-white max-w-7xl w-full shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md overflow-hidden">
           <div className="w-full h-full">
@@ -68,7 +76,7 @@ function Register() {
           <form onSubmit={handleSubmit} className="sm:p-8 p-4 w-full">
             <div className="mb-12">
               <h3 className="text-teal-700 text-4xl font-bold text-center">
-                Parent Registeration
+                Parent Registration
               </h3>
             </div>
 

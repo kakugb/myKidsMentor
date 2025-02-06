@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 const TutorRegistration = () => {
   const navigate = useNavigate();
@@ -20,27 +22,27 @@ const TutorRegistration = () => {
     availability: [],
     certifications: "",
     city: "",
-    postcode: ""
+    postcode: "",
   });
   const gradeOptions = [
     { value: "grade1", label: "Grade 1" },
     { value: "grade2", label: "Grade 2" },
     { value: "grade3", label: "Grade 3" },
-    { value: "grade4", label: "Grade 4" }
+    { value: "grade4", label: "Grade 4" },
   ];
 
   const subjectOptions = [
     { value: "math", label: "Mathematics" },
     { value: "science", label: "Science" },
     { value: "english", label: "English" },
-    { value: "history", label: "History" }
+    { value: "history", label: "History" },
   ];
   const handleSubjectsChange = (selectedOptions) => {
     setFormData({
       ...formData,
       subjectsTaught: selectedOptions
         ? selectedOptions.map((option) => option.value)
-        : []
+        : [],
     });
   };
 
@@ -49,7 +51,7 @@ const TutorRegistration = () => {
       ...formData,
       gradesHandled: selectedOptions
         ? selectedOptions.map((option) => option.value)
-        : []
+        : [],
     });
   };
 
@@ -59,7 +61,7 @@ const TutorRegistration = () => {
     const { name, value } = e.target;
     setNewAvailability((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -67,7 +69,7 @@ const TutorRegistration = () => {
     if (newAvailability.day && newAvailability.time) {
       setFormData((prev) => ({
         ...prev,
-        availability: [...prev.availability, newAvailability]
+        availability: [...prev.availability, newAvailability],
       }));
       setNewAvailability({ day: "", time: "" });
     } else {
@@ -78,7 +80,7 @@ const TutorRegistration = () => {
   const removeAvailability = (index) => {
     setFormData((prev) => ({
       ...prev,
-      availability: prev.availability.filter((_, i) => i !== index)
+      availability: prev.availability.filter((_, i) => i !== index),
     }));
   };
   const handleNext = () => {
@@ -169,34 +171,43 @@ const TutorRegistration = () => {
     }
 
     try {
-     
-      const response = await axios.post("http://localhost:5000/api/auth/register", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      }); 
-
-      setFormData({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        role: "tutor",
-        password: "",
-        profilePicture: "",
-        qualifications: "",
-        subjectsTaught: [],
-        gradesHandled: [],
-        teachingExperience: "",
-        hourlyRates: "",
-        availability: [],
-        certifications: "",
-        city: "",
-        postcode: ""
-      });
-      navigate("/loginTutor");
+      );
+      toast.success(response.data.message || "Registration successful!");
+      
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          phoneNumber: "",
+          role: "tutor",
+          password: "",
+          profilePicture: "",
+          qualifications: "",
+          subjectsTaught: [],
+          gradesHandled: [],
+          teachingExperience: "",
+          hourlyRates: "",
+          availability: [],
+          certifications: "",
+          city: "",
+          postcode: "",
+        });
+        navigate("/loginTutor");
+      }, 3000);
     } catch (error) {
-       alert(error)
-      console.error("Error:", error);
+      if (error.response && error.response.data.message) {
+        toast.error(error.response.data.message); // Show specific backend message
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -619,6 +630,7 @@ const TutorRegistration = () => {
           </p>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

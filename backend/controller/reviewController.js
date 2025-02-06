@@ -7,10 +7,8 @@ const User = require('../models/user.js')
 const addReview = async (req, res) => {
   const { tutor_id, parent_id, rating, comment } = req.body;
 
-  if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ message: 'Rating must be between 1 and 5' });
-  }
-
+ 
+console.log(rating,comment)
   try {
     const newReview = await Review.create({
       tutor_id,

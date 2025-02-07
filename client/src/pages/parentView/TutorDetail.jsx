@@ -145,6 +145,7 @@ const TutorDetail = () => {
       timestamp: new Date(),
     };
     try {
+      console.log(newMessage)
       const response = await axios.post(
         "http://localhost:5000/api/messages/send",
         newMessage
@@ -191,7 +192,7 @@ const TutorDetail = () => {
     );
   }
 
-  console.log(certificationsArray);
+
   return (
     <div className="container mx-auto p-5 lg:flex gap-10 animate-fadeIn">
       {/* LEFT COLUMN: Tutor Details */}

@@ -4,6 +4,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
 import adminLogin2 from "../../assests/adminlogin2.jpeg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function LoginAdmin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,9 +51,11 @@ function LoginAdmin() {
       navigate("/admin/tutorVerfication");
     } catch (error) {
       setLoading(false);
-      setErrorMessage(
-        error.response?.data?.message || "Login failed. Please try again."
-      );
+      if (error.response && error.response.data.message) {
+        toast.error(error.response.data.message); // Show specific backend message
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -107,7 +111,8 @@ function LoginAdmin() {
           </button>
         </form>
       </div>
-      <p className="flex justify-end text-sm text-teal-700 font-semibold">
+      <ToastContainer />
+      {/* <p className="flex justify-end text-sm text-teal-700 font-semibold">
         Go to landing page?
         <Link
           to="/landing"
@@ -115,7 +120,7 @@ function LoginAdmin() {
         >
           Click here
         </Link>
-      </p>
+      </p> */}
     </div>
   );
 }

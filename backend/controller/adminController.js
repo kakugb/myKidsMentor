@@ -14,13 +14,13 @@ exports.loginAdmin = async (req, res) => {
     const admin = await Admin.findOne({ where: { email } });
 
     if (!admin) {
-      return res.status(400).json({ error: "Admin not found." });
+      return res.status(400).json({ message: "Admin not found." });
     }
 
     // Compare passwords
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid credentials." });
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
     // Generate JWT token

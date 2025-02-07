@@ -15,8 +15,6 @@ function Messages() {
   const senderId = user?.id;
   const [ReceiverNumber, setTutorPhoneNumber] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
-  // **1. Create a reference for the end of the messages list**
   const messagesEndRef = useRef(null);
 
   // Detect if the screen is mobile size
@@ -29,7 +27,7 @@ function Messages() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // **2. Scroll to the latest message whenever `messages` change**
+  // Scroll to the latest message whenever `messages` change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -43,7 +41,7 @@ function Messages() {
         const response = await axios.get(
           `http://localhost:5000/api/messages/history?userId=${senderId}`
         );
-        setUsers(response.data?.conversations);
+        setUsers(sortUsersByLastMessage(response.data?.conversations));
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -64,7 +62,9 @@ function Messages() {
       const response = await axios.get(
         `http://localhost:5000/api/messages/userMessage?senderId=${senderId}&receiverId=${id}`
       );
-      setMessages(response.data.messages);
+      // Sort messages by timestamp in ascending order
+      const sortedMessages = response.data.messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      setMessages(sortedMessages);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -93,11 +93,9 @@ function Messages() {
 
       // Update the users state to reflect the new last message and timestamp
       setUsers((prevUsers) => {
-        // Determine the unique identifier for the conversation (other user's ID)
         const otherUserId =
           selectedUser.id === senderId ? selectedUser.receiverId : selectedUser.senderId;
 
-        // Check if the conversation already exists
         const existingConversationIndex = prevUsers.findIndex(
           (conv) => conv.receiverId === otherUserId
         );
@@ -115,10 +113,10 @@ function Messages() {
           updatedUsers.splice(existingConversationIndex, 1);
 
           // Add the updated conversation to the top of the list
-          return [updatedConversation, ...updatedUsers];
+          return sortUsersByLastMessage([updatedConversation, ...updatedUsers]);
         } else {
           // If conversation doesn't exist, add it
-          return [
+          return sortUsersByLastMessage([
             {
               receiverId: ReceiverNumber,
               name: selectedUser.name,
@@ -127,7 +125,7 @@ function Messages() {
               timestamp: newMessage.timestamp,
             },
             ...prevUsers,
-          ];
+          ]);
         }
       });
     } catch (err) {
@@ -137,6 +135,10 @@ function Messages() {
         prevMessages.filter((msg) => msg !== newMessage)
       );
     }
+  };
+
+  const sortUsersByLastMessage = (users) => {
+    return users.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   };
 
   const formatTimestamp = (timestamp) => {
@@ -243,7 +245,7 @@ function Messages() {
             </div>
           </div>
         ))}
-        {/* **3. Add a dummy div to anchor the scroll** */}
+        {/* Add a dummy div to anchor the scroll */}
         <div ref={messagesEndRef} />
       </div>
       <div className="p-4 border-t border-gray-300">
@@ -273,11 +275,7 @@ function Messages() {
   );
 
   // Main render:
-  // - On mobile: If no conversation is selected, show the conversation list.
-  //   Otherwise, show the chat area with a back arrow.
-  // - On desktop: Render both side by side.
   return (
-    // Replace h-screen with a calculated height to account for your header (assumed 64px here)
     <div className="h-[calc(100vh-104px)]">
       {isMobile ? (
         selectedUser ? (

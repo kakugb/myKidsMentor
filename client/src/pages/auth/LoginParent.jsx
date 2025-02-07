@@ -4,6 +4,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
 import parentLoginMain from "../../assests/parentLoginMain.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function LoginParent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,9 +51,11 @@ function LoginParent() {
       navigate("/parent/dashboard");
     } catch (error) {
       setLoading(false);
-      setErrorMessage(
-        error.response?.data?.message || "Login failed. Please try again."
-      );
+       if (error.response && error.response.data.message) {
+              toast.error(error.response.data.message); // Show specific backend message
+            } else {
+              toast.error("An unexpected error occurred. Please try again.");
+            }
     }
   };
 
@@ -113,6 +117,7 @@ function LoginParent() {
           </Link>
         </div>
       </div>
+       <ToastContainer />
     </div>
   );
 }

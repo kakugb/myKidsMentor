@@ -133,7 +133,7 @@ function Dashboard() {
       setError(
         "An error occurred while fetching tutors. Please try again later."
       ); // Display a generic error message
-      toast.error("An error occurred while applying filters.");
+      toast.error("no match tutor filters.");
     } finally {
       setLoading(false); // End loading state
     }
@@ -182,7 +182,7 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching tutors:", error);
       setError("Failed to load tutors. Please try again later.");
-      toast.error("Failed to load tutors. Please try again.");
+    
     } finally {
       setLoading(false);
     }

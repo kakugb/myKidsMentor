@@ -4,6 +4,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
 import tutorLoginMain from "../../assests/tutorLoginMain.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function LoginTutor() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +34,7 @@ function LoginTutor() {
         "http://localhost:5000/api/auth/login",
         {
           email,
-          password
+          password,
         }
       );
 
@@ -50,9 +52,11 @@ function LoginTutor() {
     } catch (error) {
       console.log(error);
       setLoading(false);
-      setErrorMessage(
-        error.response?.data?.message || "Login failed. Please try again."
-      );
+      if (error.response && error.response.data.message) {
+        toast.error(error.response.data.message); // Show specific backend message
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -67,7 +71,9 @@ function LoginTutor() {
       </div>
 
       <div class="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-        <h1 class="text-5xl font-bold mb-10 text-center text-teal-700">Tutor Login</h1>
+        <h1 class="text-5xl font-bold mb-10 text-center text-teal-700">
+          Tutor Login
+        </h1>
         <form onSubmit={handleLogin}>
           <div class="mb-4">
             <label for="username" class="block text-gray-600">
@@ -111,6 +117,7 @@ function LoginTutor() {
             Registered as Tutor
           </Link>
         </div>
+        <ToastContainer />
       </div>
     </div>
   );

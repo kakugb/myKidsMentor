@@ -116,6 +116,9 @@ function LoginTutor() {
           <Link to="/tutor/Register" class="hover:underline">
             Registered as Tutor
           </Link>
+          <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
+                                      Go to landing page?
+                                    </Link>
         </div>
         <ToastContainer />
       </div>

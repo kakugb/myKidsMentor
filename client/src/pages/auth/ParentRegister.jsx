@@ -153,7 +153,7 @@ function Register() {
               >
                 Sign up
               </button>
-              <p className="flex justify-end text-sm text-teal-700 font-semibold">
+              <p className="flex justify-center text-sm text-teal-700 font-semibold pt-6">
                 Already registered?
                 <Link
                   to="/loginParent"
@@ -161,7 +161,11 @@ function Register() {
                 >
                   Login here
                 </Link>
+                <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
+                                      Go to landing page?
+                                    </Link>
               </p>
+              
             </div>
           </form>
         </div>

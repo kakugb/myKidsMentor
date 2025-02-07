@@ -181,7 +181,7 @@ const TutorRegistration = () => {
         }
       );
       toast.success(response.data.message || "Registration successful!");
-      
+
       setTimeout(() => {
         setFormData({
           name: "",
@@ -626,6 +626,10 @@ const TutorRegistration = () => {
               className="ml-1 hover:text-teal-600 hover:underline hover:underline-offset-4"
             >
               Login here
+            </Link>
+            <b className="px-5">Or</b>
+            <Link to="/landing" class="hover:underline">
+              Go to landing page?
             </Link>
           </p>
         </form>

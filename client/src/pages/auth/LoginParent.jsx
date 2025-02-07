@@ -113,8 +113,11 @@ function LoginParent() {
 
         <div class="mt-6 text-teal-700 text-center">
           <Link to="/parent/Register" class="hover:underline">
-            Registered as Parent
+            Registered as Parent  
           </Link>
+          <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
+                        Go to landing page?
+                      </Link>
         </div>
       </div>
        <ToastContainer />

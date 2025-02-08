@@ -3,8 +3,14 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../../store/authSlice.js";
 import logo from "../../assests/Logo.svg";
-import { FaUserCheck, FaTachometerAlt, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
-
+import {
+  FaUserCheck,
+  FaTachometerAlt,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
+import { CgProfile } from "react-icons/cg"; // Import the CgProfile icon
 const BASE_URL_IMAGE = import.meta.env.VITE_MY_KIDS_MENTOR_IMAGE_URL;
 
 function Footer() {
@@ -54,17 +60,21 @@ function Footer() {
 
               <span className="hidden sm:block font-semibold uppercase">
                 {user?.name}
-              </span> 
+              </span>
 
               <button
                 onClick={toggleDropdown}
                 className="flex items-center p-2 rounded-full bg-gray-800 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
               >
-                <img
-                  alt="User"
-                  src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                {user?.profile_picture ? (
+                  <img
+                    alt="User"
+                    src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
+                    className="w-8 h-8 rounded-full object-cover "
+                  />
+                ) : (
+                  <CgProfile className="w-8 h-8 text-gray-500" />
+                )}
               </button>
 
               {isDropdownOpen && (
@@ -100,7 +110,7 @@ function Footer() {
       >
         <div className="h-full px-3 pb-4 overflow-y-auto">
           <ul className="space-y-2 font-medium">
-          <li>
+            <li>
               <Link
                 to="/admin/dashboard"
                 className="flex items-center p-2 text-gray-900 hover:bg-teal-100 dark:text-white dark:hover:bg-teal-600 rounded-md transition-colors"
@@ -118,7 +128,7 @@ function Footer() {
                 <span className="ml-3">Tutor Verification</span>
               </Link>
             </li>
-           
+
             {/* Add more sidebar items here with appropriate icons */}
           </ul>
         </div>

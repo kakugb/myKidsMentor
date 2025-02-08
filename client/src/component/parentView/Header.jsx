@@ -77,12 +77,12 @@ export default function Header() {
         </PopoverGroup>
         <Menu as="div" className="relative ml-1">
               <div className="flex gap-x-2 items-center">
-              <span className="">{user?.name}</span>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+              <span className="font-bold uppercase pr-2">{user?.name}</span>
+                <MenuButton className="relative flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img
-                    alt=""
+                    alt="admin profile"
                     src={`${BASE_URL_IMAGE}uploads/${user?.profilePicture}`}
                     className="size-10 rounded-full"
                   />

@@ -34,7 +34,7 @@ function LoginParent() {
         "http://localhost:5000/api/auth/login",
         {
           email,
-          password
+          password,
         }
       );
 
@@ -51,11 +51,11 @@ function LoginParent() {
       navigate("/parent/dashboard");
     } catch (error) {
       setLoading(false);
-       if (error.response && error.response.data.message) {
-              toast.error(error.response.data.message); // Show specific backend message
-            } else {
-              toast.error("An unexpected error occurred. Please try again.");
-            }
+      if (error.response && error.response.data.message) {
+        toast.error(error.response.data.message); // Show specific backend message
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -76,7 +76,7 @@ function LoginParent() {
         <form onSubmit={handleLogin}>
           <div class="mb-4">
             <label for="username" class="block text-gray-600">
-              Username
+              Email Address
             </label>
             <input
               type="email"
@@ -113,14 +113,15 @@ function LoginParent() {
 
         <div class="mt-6 text-teal-700 text-center">
           <Link to="/parent/Register" class="hover:underline">
-            Registered as Parent  
+            Registered as Parent
           </Link>
-          <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
-                        Go to landing page?
-                      </Link>
+          <b className="px-5">Or</b>
+          <Link to="/landing" class="hover:underline">
+            Go to landing page?
+          </Link>
         </div>
       </div>
-       <ToastContainer />
+      <ToastContainer />
     </div>
   );
 }

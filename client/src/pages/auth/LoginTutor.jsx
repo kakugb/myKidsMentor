@@ -77,7 +77,7 @@ function LoginTutor() {
         <form onSubmit={handleLogin}>
           <div class="mb-4">
             <label for="username" class="block text-gray-600">
-              Username
+              Email Address
             </label>
             <input
               type="email"
@@ -116,9 +116,10 @@ function LoginTutor() {
           <Link to="/tutor/Register" class="hover:underline">
             Registered as Tutor
           </Link>
-          <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
-                                      Go to landing page?
-                                    </Link>
+          <b className="px-5">Or</b>
+          <Link to="/landing" class="hover:underline">
+            Go to landing page?
+          </Link>
         </div>
         <ToastContainer />
       </div>

@@ -76,7 +76,7 @@ function LoginAdmin() {
         <form onSubmit={handleLogin}>
           <div class="mb-4">
             <label for="username" class="block text-gray-600">
-              Username
+              Email Address
             </label>
             <input
               type="email"
@@ -116,9 +116,8 @@ function LoginAdmin() {
           </Link>
         </div>
       </div>
-    
+
       <ToastContainer />
-      
     </div>
   );
 }

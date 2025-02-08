@@ -1,32 +1,33 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios"; 
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import parentRegister from "../../assests/parentLogin.jpeg";
 
 function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     phoneNumber: "",
     profilePicture: null,
-    role: "parent"
+    role: "parent",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      profilePicture: e.target.files[0]
+      profilePicture: e.target.files[0],
     });
   };
 
@@ -44,11 +45,21 @@ function Register() {
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
       toast.success(response.data.message || "Registration successful!");
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        phoneNumber: "",
+        profilePicture: "",
+      });
+      setTimeout(() => {
+        navigate("/loginParent");
+      }, 3000);
     } catch (error) {
       if (error.response) {
         // Server responded with an error status
@@ -161,11 +172,11 @@ function Register() {
                 >
                   Login here
                 </Link>
-                <b className="px-5">Or</b><Link to="/landing" class="hover:underline">
-                                      Go to landing page?
-                                    </Link>
+                <b className="px-5">Or</b>
+                <Link to="/landing" class="hover:underline">
+                  Go to landing page?
+                </Link>
               </p>
-              
             </div>
           </form>
         </div>

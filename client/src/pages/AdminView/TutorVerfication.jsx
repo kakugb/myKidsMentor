@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import { FaEye, FaCheck, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,7 +29,11 @@ function TutorVerification() {
       toast.error(err.response?.data?.message || "Failed to fetch tutor details");
     }
   };
-
+  useEffect(() => {
+    if (selectedTutor) {
+      console.log("Selected Tutor Certifications:", selectedTutor?.certifications || "no");
+    }
+  }, [selectedTutor]);
   const closePopup = () => {
     setPopupIsOpen(false);
     setSelectedTutor(null);
@@ -109,7 +114,20 @@ function TutorVerification() {
       </div>
     );
   }
-console.log(selectedTutor.certifications)
+ // Process certifications (JSON string or array)
+ let certificationsArray = [];
+ if (selectedTutor) {
+   if (typeof selectedTutor.certifications === "string") {
+     try {
+       certificationsArray = JSON.parse(selectedTutor.certifications);
+     } catch (error) {
+       console.error("Error parsing certifications:", error);
+     }
+   } else if (Array.isArray(selectedTutor.certifications)) {
+     certificationsArray = selectedTutor.certifications;
+   }
+ }
+ 
   return (
     <div className="container mx-auto px-4 sm:px-8 py-6 bg-gray-100 min-h-screen">
       <ToastContainer />
@@ -328,32 +346,35 @@ console.log(selectedTutor.certifications)
                   </div>
 
                   {/* Certifications */}
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-2 text-teal-600">
-                      Certifications
-                    </h3>
-                    {Array.isArray(selectedTutor.certifications) && selectedTutor.certifications.length > 0 ? (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {selectedTutor.certifications.map((cert, index) => (
-                          <a
-                            key={index}
-                            href={cert}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block"
-                          >
-                            <img
-                              src={`${BASE_URL_IMAGE}uploads/${cert}`}
-                              alt={`Certification ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
-                            />
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500">No certifications available.</p>
-                    )}
-                  </div>
+  {/* Certifications */}
+  {certificationsArray.length > 0 ? (
+          <div className="mt-8">
+            <h3 className="text-2xl font-bold text-teal-700">Certifications</h3>
+            <ul className="flex flex-wrap gap-6 mt-4">
+              {certificationsArray.map((certificate, index) => (
+                <li key={index} className="group">
+                  <Link
+                    to={`${BASE_URL_IMAGE}uploads/${certificate}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-blue-600"
+                  >
+                    <img
+                      src={`${BASE_URL_IMAGE}uploads/${certificate}`}
+                      alt={`Certification ${index + 1}`}
+                      className="w-32 h-32 object-cover rounded border-2 border-teal-500 shadow group-hover:shadow-lg transition-shadow duration-300"
+                    />
+                  </Link>
+                  <p className="mt-2 text-center text-sm text-gray-700">
+                    {certificate.substring(certificate.lastIndexOf("-") + 1)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="mt-8 text-gray-500">No certifications available.</p>
+        )}
 
                   {/* Close Button */}
                   <div className="mt-6 text-center">

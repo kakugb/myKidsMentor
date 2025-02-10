@@ -62,21 +62,35 @@ function Footer() {
                 {user?.name}
               </span>
 
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center p-2 rounded-full bg-gray-800 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
-              >
-                {user?.profile_picture ? (
-                  <img
-                    alt="User"
-                    src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
-                    className="w-8 h-8 rounded-full object-cover "
-                  />
-                ) : (
-                  <CgProfile className="w-8 h-8 text-gray-500" />
-                )}
-              </button>
-
+               {
+                user.profile_picture ? (
+                  <button
+                  onClick={toggleDropdown}
+                  className="flex items-center p-2 rounded-full bg-gray-800 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+                >
+               
+                    <img
+                      alt="User"
+                      src={`${BASE_URL_IMAGE}uploads/${user?.profile_picture}`}
+                      className="w-8 h-8 rounded-full object-cover "
+                    />
+                  
+                </button>
+                )
+                :
+                (
+                  <button
+                  onClick={toggleDropdown}
+                  className="flex items-center p-2 rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+                >
+                 <CgProfile className="w-8 h-8 text-gray-500" />
+                  
+                </button>
+                )
+               }
+             
+                
+              
               {isDropdownOpen && (
                 <div className="absolute top-12 right-4 z-50 bg-white rounded-lg shadow-lg dark:bg-gray-700">
                   <div className="px-4 py-3">

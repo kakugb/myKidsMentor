@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import { FaEye, FaCheck, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { FiTrash2, FiEdit } from "react-icons/fi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -110,7 +109,7 @@ function TutorVerification() {
       </div>
     );
   }
-
+console.log(selectedTutor.certifications)
   return (
     <div className="container mx-auto px-4 sm:px-8 py-6 bg-gray-100 min-h-screen">
       <ToastContainer />
@@ -333,7 +332,7 @@ function TutorVerification() {
                     <h3 className="text-lg font-semibold mb-2 text-teal-600">
                       Certifications
                     </h3>
-                    {selectedTutor.certifications.length > 0 ? (
+                    {Array.isArray(selectedTutor.certifications) && selectedTutor.certifications.length > 0 ? (
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {selectedTutor.certifications.map((cert, index) => (
                           <a
